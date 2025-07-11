@@ -1,0 +1,12 @@
+[
+  { "id": 1, "name": "Krypto", "type": "Perro", "superPower": "Vuelo" },
+  { "id": 2, "name": "Ace", "type": "Perro", "superPower": "Inteligencia" },
+  { "id": 3, "name": "Comet", "type": "Caballo", "superPower": "Super velocidad" },
+  { "id": 4, "name": "Streaky", "type": "Gato", "superPower": "Super fuerza" },
+  { "id": 5, "name": "Dex-Starr", "type": "Gato", "superPower": "Rage plasma" },
+  { "id": 6, "name": "Jumpa", "type": "Canguro", "superPower": "Salto gigante" },
+  { "id": 7, "name": "Bat-Cow", "type": "Vaca", "superPower": "Resistencia" },
+  { "id": 8, "name": "Storm", "type": "Caballo", "superPower": "Nadar bajo el agua" },
+  { "id": 9, "name": "Tawky Tawny", "type": "Tigre", "superPower": "Habla humana" },
+  { "id": 10, "name": "Gleek", "type": "Mono", "superPower": "Elasticidad" }
+] 
