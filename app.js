@@ -3,8 +3,12 @@ import heroController from './controllers/heroController.js';
 import petController from './controllers/petController.js';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
+import { connectDB } from './db.js';
 
 const app = express();
+
+// Conectar a MongoDB
+connectDB();
 
 const swaggerOptions = {
   definition: {

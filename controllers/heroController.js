@@ -72,9 +72,7 @@ router.post("/heroes",
             return res.status(400).json({ error : errors.array() })
         }
         try {
-            const { name, alias, city, team } = req.body;
-            const newHero = new Hero(null, name, alias, city, team);
-            const addedHero = await heroService.addHero(newHero);
+            const addedHero = await heroService.addHero(req.body);
             res.status(201).json(addedHero);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -252,6 +250,25 @@ router.post('/heroes/:id/adoptar', async (req, res) => {
         res.json(hero);
     } catch (err) {
         res.status(404).json({ error: err.message });
+    }
+});
+
+/**
+ * @swagger
+ * /api/heroes/adoptantes:
+ *   get:
+ *     summary: Lista los héroes que han adoptado una mascota, mostrando toda la info del héroe y de la mascota
+ *     tags: [Heroes]
+ *     responses:
+ *       200:
+ *         description: Lista de héroes con mascota adoptada
+ */
+router.get('/heroes/adoptantes', async (req, res) => {
+    try {
+        const heroes = await import('../services/heroService.js').then(m => m.default.getHeroesWithPets());
+        res.json(heroes);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 

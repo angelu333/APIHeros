@@ -1,24 +1,13 @@
-import fs from 'fs-extra';
 import Pet from '../models/petModel.js';
 
-const filePath = './pets.json';
-
 async function getPets() {
-    try {
-        const data = await fs.readJson(filePath);
-        return data.map(pet => new Pet(pet.id, pet.name, pet.type, pet.superPower));
-    } catch (error) {
-        console.error(error);
-        return [];
-    }
+    return await Pet.find().lean();
 }
 
 async function savePets(pets) {
-    try {
-        await fs.writeJson(filePath, pets);
-    } catch (error) {
-        console.error(error);
-    }
+    // Borra todos y vuelve a insertar (para compatibilidad con la lógica actual)
+    await Pet.deleteMany({});
+    await Pet.insertMany(pets);
 }
 
 export default {
