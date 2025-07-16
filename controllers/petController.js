@@ -20,8 +20,12 @@ import {
   curePet
 } from "../services/petService.js";
 import Pet from "../models/petModel.js";
+import { requireAuth } from '../middlewares/auth.js';
 
 const router = express.Router();
+
+// Proteger todos los endpoints
+router.use(requireAuth);
 
 /**
  * @swagger
@@ -35,7 +39,7 @@ const router = express.Router();
  */
 router.get("/pets", async (req, res) => {
     try {
-        const pets = await getAllPets();
+        const pets = await Pet.find({ owner: req.user._id });
         res.json(pets);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -83,8 +87,10 @@ router.post("/pets",
             return res.status(400).json({ error : errors.array() })
         }
         try {
-            const addedPet = await addPet(req.body);
-            res.status(201).json(addedPet);
+            const petData = { ...req.body, owner: req.user._id };
+            const newPet = new Pet(petData);
+            await newPet.save();
+            res.status(201).json(newPet);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -111,8 +117,9 @@ router.post("/pets",
  */
 router.delete('/pets/:id', async (req, res) => {
     try {
-        const result = await deletePet(req.params.id);
-        res.json(result);
+        const pet = await Pet.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
+        if (!pet) return res.status(404).json({ error: 'Mascota no encontrada' });
+        res.json({ message: 'Mascota eliminada' });
     } catch (error) {
         res.status(404).json({ error: error.message });
     }

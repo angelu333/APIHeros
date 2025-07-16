@@ -11,7 +11,8 @@ const petSchema = new mongoose.Schema({
   personalidad: { type: String, default: 'alegre' },
   enfermedades: { type: Array, default: [] },
   ropa: { type: Array, default: [] },
-  ultimaActualizacion: { type: String, default: () => new Date().toISOString() }
+  ultimaActualizacion: { type: String, default: () => new Date().toISOString() },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
 const Pet = mongoose.model('Pet', petSchema);

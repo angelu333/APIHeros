@@ -9,8 +9,12 @@ import express from "express";
 import { check, validationResult } from 'express-validator';
 import heroService from "../services/heroService.js";
 import Hero from "../models/heroModel.js";
+import { requireAuth } from '../middlewares/auth.js';
 
 const router = express.Router();
+
+// Proteger todos los endpoints
+router.use(requireAuth);
 
 /**
  * @swagger
@@ -24,7 +28,7 @@ const router = express.Router();
  */
 router.get("/heroes", async (req, res) => {
     try {
-        const heroes = await heroService.getAllHeroes();
+        const heroes = await Hero.find({ owner: req.user._id });
         res.json(heroes);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -72,8 +76,10 @@ router.post("/heroes",
             return res.status(400).json({ error : errors.array() })
         }
         try {
-            const addedHero = await heroService.addHero(req.body);
-            res.status(201).json(addedHero);
+            const heroData = { ...req.body, owner: req.user._id };
+            const newHero = new Hero(heroData);
+            await newHero.save();
+            res.status(201).json(newHero);
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -115,8 +121,13 @@ router.post("/heroes",
  */
 router.put("/heroes/:id", async (req, res) => {
     try {
-        const updatedHero = await heroService.updateHero(req.params.id, req.body);
-        res.json(updatedHero);
+        const hero = await Hero.findOneAndUpdate(
+            { _id: req.params.id, owner: req.user._id },
+            req.body,
+            { new: true }
+        );
+        if (!hero) return res.status(404).json({ error: 'Héroe no encontrado' });
+        res.json(hero);
     } catch (error) {
         res.status(404).json({ error: error.message });
     }
@@ -143,8 +154,9 @@ router.put("/heroes/:id", async (req, res) => {
  */
 router.delete('/heroes/:id', async (req, res) => {
     try {
-        const result = await heroService.deleteHero(req.params.id);
-        res.json(result);
+        const hero = await Hero.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
+        if (!hero) return res.status(404).json({ error: 'Héroe no encontrado' });
+        res.json({ message: 'Héroe eliminado' });
     } catch (error) {
         res.status(404).json({ error: error.message });
     }
