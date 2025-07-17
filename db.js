@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const uri = 'mongodb+srv://Angel0407:Angel0407@cluster0.g6gbqv9.mongodb.net/api-superheroes?retryWrites=true&w=majority&appName=Cluster0';
+const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/api-superheroes';
 
 export async function connectDB() {
   try {

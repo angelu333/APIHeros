@@ -1,7 +1,5 @@
-import heroRepository from '../repositories/heroRepository.js';
 import Hero from '../models/heroModel.js';
 import Pet from '../models/petModel.js';
-import petRepository from '../repositories/petRepository.js';
 import { degradePetStats } from './petService.js';
 
 async function getAllHeroes() {
@@ -40,36 +38,39 @@ async function addHero(hero) {
 }
 
 async function updateHero(id, updatedHero) {
-    const heroes = await heroRepository.getHeroes();
-    const index = heroes.findIndex(hero => hero.id === parseInt(id));
-    if (index === -1) {
+    const hero = await Hero.findById(id);
+    if (!hero) {
         throw new Error('Héroe no encontrado');
     }
     delete updatedHero.id;
-    heroes[index] = { ...heroes[index], ...updatedHero };
-    await heroRepository.saveHeroes(heroes);
-    return heroes[index];
+    Object.assign(hero, updatedHero);
+    await hero.save();
+    return hero.toObject();
 }
 
 async function deleteHero(id) {
-    const heroes = await heroRepository.getHeroes();
-    const index = heroes.findIndex(hero => hero.id === parseInt(id));
-    if (index === -1) {
+    const hero = await Hero.findById(id);
+    if (!hero) {
         throw new Error('Héroe no encontrado');
     }
-    const filteredHeroes = heroes.filter(hero => hero.id !== parseInt(id));
-    await heroRepository.saveHeroes(filteredHeroes);
+    await hero.deleteOne();
     return { message: 'Héroe eliminado' };
 }
 
 async function findHeroesByCity(city) {
-    const heroes = await heroRepository.getHeroes();
-    return heroes.filter(hero => hero.city && hero.city.toLowerCase() === city.toLowerCase());
+    const heroes = await Hero.find({ city: city.toLowerCase() }).lean();
+    return heroes.map(hero => ({
+        _id: hero._id,
+        name: hero.name,
+        alias: hero.alias,
+        city: hero.city,
+        team: hero.team,
+        petId: hero.petId
+    }));
 }
 
 async function faceVillain(heroId, villain) {
-    const heroes = await heroRepository.getHeroes();
-    const hero = heroes.find(hero => hero.id === parseInt(heroId));
+    const hero = await Hero.findById(heroId).lean();
     if (!hero) {
         throw new Error('Héroe no encontrado');
     }
@@ -98,32 +99,26 @@ async function adoptPet(heroId, petId) {
 }
 
 async function removePetReferenceFromHeroes(petId) {
-    const heroes = await heroRepository.getHeroes();
-    let updated = false;
+    const heroes = await Hero.find({ petId: petId });
     for (const hero of heroes) {
-        if (hero.petId === parseInt(petId)) {
-            hero.petId = null;
-            updated = true;
-        }
-    }
-    if (updated) {
-        await heroRepository.saveHeroes(heroes);
+        hero.petId = null;
+        await hero.save();
     }
 }
 
 async function getHeroesWithPets() {
-    const heroes = await heroRepository.getHeroes();
-    let pets = await petRepository.getPets();
+    const heroes = await Hero.find().lean();
+    let pets = await Pet.find().lean(); // Changed from petRepository.getPets()
     let petsUpdated = false;
     const result = heroes
         .filter(hero => hero.petId)
         .map(hero => {
-            let pet = pets.find(p => p.id === hero.petId);
+            let pet = pets.find(p => p._id.toString() === hero.petId); // Changed from p.id === hero.petId
             if (pet) {
                 const updatedPet = degradePetStats(pet);
                 // Solo si cambió, actualiza en el array
                 if (JSON.stringify(pet) !== JSON.stringify(updatedPet)) {
-                    pets = pets.map(p => p.id === pet.id ? updatedPet : p);
+                    pets = pets.map(p => p._id.toString() === pet._id.toString() ? updatedPet : p); // Changed from p.id === pet.id
                     petsUpdated = true;
                 }
                 pet = updatedPet;
@@ -134,7 +129,7 @@ async function getHeroesWithPets() {
             };
         });
     if (petsUpdated) {
-        await petRepository.savePets(pets);
+        await Pet.bulkWrite(pets.map(p => ({ updateOne: { filter: { _id: p._id }, update: p } }))); // Changed from petRepository.savePets(pets)
     }
     return result;
 }

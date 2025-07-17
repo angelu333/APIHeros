@@ -20,6 +20,7 @@ import {
   curePet
 } from "../services/petService.js";
 import Pet from "../models/petModel.js";
+import Hero from '../models/heroModel.js';
 import { requireAuth } from '../middlewares/auth.js';
 
 const router = express.Router();
@@ -148,7 +149,7 @@ router.get('/pets/:id/status', async (req, res) => {
     try {
         // Verifica si la mascota está adoptada por algún héroe
         const petId = parseInt(req.params.id);
-        const heroes = await import('../repositories/heroRepository.js').then(m => m.default.getHeroes());
+        const heroes = await Hero.find().lean();
         const adopted = heroes.some(hero => hero.petId === petId);
         if (!adopted) {
             return res.status(404).json({ error: 'La mascota no ha sido adoptada por ningún héroe.' });

@@ -1,7 +1,6 @@
-import petRepository from '../repositories/petRepository.js';
-import heroService from './heroService.js';
-import heroRepository from '../repositories/heroRepository.js';
+import Hero from '../models/heroModel.js';
 import Pet from '../models/petModel.js';
+import heroService from './heroService.js';
 
 function randomIllnessEvent(pet) {
     // Enfermedades posibles
@@ -76,7 +75,7 @@ function degradePetStats(pet) {
 }
 
 async function getAllPets() {
-    const pets = await petRepository.getPets();
+    const pets = await Pet.find().lean();
     // Devuelvo los datos básicos + _id
     return pets.map(pet => ({
         _id: pet._id,
@@ -110,18 +109,16 @@ async function addPet(pet) {
 
 async function deletePet(id) {
     // Solo se puede eliminar si la mascota ya ha sido adoptada
-    const heroes = await heroRepository.getHeroes();
+    const heroes = await Hero.find().lean();
     const adopted = heroes.some(hero => hero.petId === parseInt(id));
     if (!adopted) {
         throw new Error('Solo puedes eliminar una mascota que ya ha sido adoptada por un héroe.');
     }
-    const pets = await petRepository.getPets();
-    const index = pets.findIndex(pet => pet.id === parseInt(id));
-    if (index === -1) {
+    const pet = await Pet.findById(id);
+    if (!pet) {
         throw new Error('Mascota no encontrada');
     }
-    const filteredPets = pets.filter(pet => pet.id !== parseInt(id));
-    await petRepository.savePets(filteredPets);
+    await pet.deleteOne();
     // Eliminar referencia en héroes
     await heroService.removePetReferenceFromHeroes(id);
     return { message: 'Mascota eliminada' };

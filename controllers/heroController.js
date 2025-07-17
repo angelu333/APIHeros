@@ -18,17 +18,17 @@ router.use(requireAuth);
 
 /**
  * @swagger
- * /api/heroes:
+ * /heroes:
  *   get:
- *     summary: Obtiene todos los héroes
+ *     summary: Lista todos los héroes
  *     tags: [Heroes]
  *     responses:
  *       200:
  *         description: Lista de héroes
  */
-router.get("/heroes", async (req, res) => {
+router.get('/', async (req, res) => {
     try {
-        const heroes = await Hero.find({ owner: req.user._id });
+        const heroes = await Hero.find();
         res.json(heroes);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -278,6 +278,16 @@ router.post('/heroes/:id/adoptar', async (req, res) => {
 router.get('/heroes/adoptantes', async (req, res) => {
     try {
         const heroes = await import('../services/heroService.js').then(m => m.default.getHeroesWithPets());
+        res.json(heroes);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Nueva ruta para listar héroes en /api/heroes
+router.get('/heroes', async (req, res) => {
+    try {
+        const heroes = await Hero.find();
         res.json(heroes);
     } catch (error) {
         res.status(500).json({ error: error.message });
