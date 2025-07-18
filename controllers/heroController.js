@@ -285,7 +285,7 @@ router.post('/heroes/:id/adoptar', async (req, res) => {
  */
 router.get('/heroes/adoptantes', async (req, res) => {
     try {
-        const heroes = await import('../services/heroService.js').then(m => m.default.getHeroesWithPets());
+        const heroes = await heroService.getHeroesWithPets(req.user._id);
         res.json(heroes);
     } catch (error) {
         res.status(500).json({ error: error.message });

@@ -106,9 +106,9 @@ async function removePetReferenceFromHeroes(petId) {
     }
 }
 
-async function getHeroesWithPets() {
-    const heroes = await Hero.find().lean();
-    let pets = await Pet.find().lean(); // Changed from petRepository.getPets()
+async function getHeroesWithPets(userId) {
+    const heroes = await Hero.find({ owner: userId }).lean();
+    let pets = await Pet.find().lean();
     let petsUpdated = false;
     const result = heroes
         .filter(hero => hero.petId)
@@ -116,10 +116,11 @@ async function getHeroesWithPets() {
             let pet = pets.find(p => p._id.toString() === hero.petId.toString());
             if (pet) {
                 const updatedPet = degradePetStats(pet);
-                // Solo si cambió, actualiza en el array
                 if (JSON.stringify(pet) !== JSON.stringify(updatedPet)) {
-                    pets = pets.map(p => p._id.toString() === pet._id.toString() ? updatedPet : p); // Changed from p.id === pet.id
+                    pets = pets.map(p => p._id.toString() === pet._id.toString() ? updatedPet : p);
                     petsUpdated = true;
+                    // Guardar los cambios dinámicos en la base de datos inmediatamente
+                    Pet.findByIdAndUpdate(pet._id, updatedPet).catch(() => {});
                 }
                 pet = updatedPet;
             }
@@ -129,7 +130,7 @@ async function getHeroesWithPets() {
             };
         });
     if (petsUpdated) {
-        await Pet.bulkWrite(pets.map(p => ({ updateOne: { filter: { _id: p._id }, update: p } }))); // Changed from petRepository.savePets(pets)
+        await Pet.bulkWrite(pets.map(p => ({ updateOne: { filter: { _id: p._id }, update: p } })));
     }
     return result;
 }
