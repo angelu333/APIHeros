@@ -5,7 +5,7 @@ const heroSchema = new mongoose.Schema({
   alias: String,
   city: String,
   team: String,
-  petId: { type: Number, default: null },
+  petId: { type: mongoose.Schema.Types.ObjectId, ref: 'Pet', default: null },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
