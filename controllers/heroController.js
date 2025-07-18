@@ -18,15 +18,23 @@ router.use(requireAuth);
 
 /**
  * @swagger
- * /heroes:
+ * /api/heroes:
  *   get:
  *     summary: Lista todos los héroes
  *     tags: [Heroes]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Lista de héroes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Hero'
  */
-router.get('/', async (req, res) => {
+router.get('/heroes', async (req, res) => {
     try {
         const heroes = await Hero.find();
         res.json(heroes);
