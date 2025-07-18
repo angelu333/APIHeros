@@ -36,7 +36,7 @@ router.use(requireAuth);
  */
 router.get('/heroes', async (req, res) => {
     try {
-        const heroes = await Hero.find();
+        const heroes = await Hero.find({ owner: req.user._id });
         res.json(heroes);
     } catch (error) {
         res.status(500).json({ error: error.message });
