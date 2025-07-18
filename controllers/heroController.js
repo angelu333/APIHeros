@@ -244,7 +244,7 @@ router.post('/heroes/:id/enfrentar', async (req, res) => {
  *       - in: path
  *         name: id
  *         schema:
- *           type: integer
+ *           type: string
  *         required: true
  *         description: ID del héroe
  *     requestBody:
@@ -255,7 +255,7 @@ router.post('/heroes/:id/enfrentar', async (req, res) => {
  *             type: object
  *             properties:
  *               petId:
- *                 type: integer
+ *                 type: string
  *                 description: ID de la mascota a adoptar
  *     responses:
  *       200:
