@@ -368,4 +368,71 @@ router.post('/pets/:id/cure', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /api/pets/adopt/{id}:
+ *   post:
+ *     summary: Adoptar una mascota
+ *     tags: [Mascotas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID del héroe
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               petId:
+ *                 type: string
+ *                 description: ID de la mascota a adoptar
+ *     responses:
+ *       200:
+ *         description: Mascota adoptada
+ *       404:
+ *         description: Héroe o mascota no encontrados
+ */
+router.post('/pets/adopt/:id', async (req, res) => {
+    try {
+        const heroId = req.params.id;
+        const { petId } = req.body;
+
+        const hero = await Hero.findById(heroId);
+        if (!hero) {
+            return res.status(404).json({ error: 'Héroe no encontrado' });
+        }
+
+        const pet = await Pet.findById(petId);
+        if (!pet) {
+            return res.status(404).json({ error: 'Mascota no encontrada' });
+        }
+
+        // Verifica si la mascota ya está adoptada por otro héroe
+        if (pet.adoptedBy) {
+            return res.status(400).json({ error: 'Esta mascota ya ha sido adoptada por otro héroe.' });
+        }
+
+        // Verifica si el héroe ya tiene una mascota
+        if (hero.petId) {
+            return res.status(400).json({ error: 'Este héroe ya tiene una mascota.' });
+        }
+
+        pet.adoptedBy = heroId;
+        pet.owner = heroId; // Asigna el héroe como propietario
+        hero.petId = petId;
+
+        await pet.save();
+        await hero.save();
+
+        res.json({ message: 'Mascota adoptada', pet, hero });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 export default router; 
