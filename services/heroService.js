@@ -113,7 +113,7 @@ async function getHeroesWithPets() {
     const result = heroes
         .filter(hero => hero.petId)
         .map(hero => {
-            let pet = pets.find(p => p._id.toString() === hero.petId); // Changed from p.id === hero.petId
+            let pet = pets.find(p => p._id.toString() === hero.petId.toString());
             if (pet) {
                 const updatedPet = degradePetStats(pet);
                 // Solo si cambió, actualiza en el array
