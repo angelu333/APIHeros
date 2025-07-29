@@ -266,10 +266,13 @@ router.post('/heroes/:id/enfrentar', async (req, res) => {
 router.post('/heroes/:id/adoptar', async (req, res) => {
     try {
         const { petId } = req.body;
-        const hero = await heroService.adoptPet(req.params.id, petId);
-        res.json(hero);
-    } catch (err) {
-        res.status(404).json({ error: err.message });
+        const hero = await Hero.findById(req.params.id);
+        if (!hero) return res.status(404).json({ error: 'Héroe no encontrado' });
+        hero.petId = petId;
+        await hero.save();
+        res.json({ message: 'Mascota adoptada', hero });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -292,10 +295,22 @@ router.get('/heroes/adoptantes', async (req, res) => {
     }
 });
 
-// Nueva ruta para listar héroes en /api/heroes
+// Obtener un héroe por ID
+router.get('/heroes/:id', async (req, res) => {
+    try {
+        // Si usas autenticación por usuario, puedes agregar: owner: req.user._id
+        const hero = await Hero.findById(req.params.id);
+        if (!hero) return res.status(404).json({ error: 'Héroe no encontrado' });
+        res.json(hero);
+    } catch (error) {
+        res.status(404).json({ error: error.message });
+    }
+});
+
+// Listar héroes solo del usuario autenticado
 router.get('/heroes', async (req, res) => {
     try {
-        const heroes = await Hero.find();
+        const heroes = await Hero.find({ owner: req.user._id });
         res.json(heroes);
     } catch (error) {
         res.status(500).json({ error: error.message });

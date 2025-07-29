@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home | HeroPet Legends</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .home-container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      background: linear-gradient(135deg, #23243a 0%, #1e2a78 100%);
+      padding-bottom: 0;
+      overflow: hidden;
+    }
+    .nav-bar {
+      width: 100%;
+      background: #1a2340;
+      box-shadow: 0 2px 16px #0004;
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      padding: 1.2rem 0 1.2rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .nav-btn {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: #fff;
+      border: none;
+      border-radius: 18px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 0.7rem 2.2rem;
+      margin: 0 0.2rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0002;
+      transition: background 0.2s;
+    }
+    .nav-btn:hover {
+      background: linear-gradient(135deg, #0072ff, #00c6ff);
+    }
+    
+    /* Animación de baño */
+    .bath-animation {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 100;
+    }
+    
+    .bubble {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      animation: bubbleFloat 3s ease-out forwards;
+    }
+    
+    .bubble:nth-child(1) { width: 20px; height: 20px; left: -30px; top: -20px; animation-delay: 0s; }
+    .bubble:nth-child(2) { width: 15px; height: 15px; left: 20px; top: -40px; animation-delay: 0.2s; }
+    .bubble:nth-child(3) { width: 25px; height: 25px; left: -10px; top: -60px; animation-delay: 0.4s; }
+    .bubble:nth-child(4) { width: 18px; height: 18px; left: 30px; top: -30px; animation-delay: 0.6s; }
+    .bubble:nth-child(5) { width: 22px; height: 22px; left: -20px; top: -50px; animation-delay: 0.8s; }
+    .bubble:nth-child(6) { width: 16px; height: 16px; left: 10px; top: -70px; animation-delay: 1s; }
+    .bubble:nth-child(7) { width: 24px; height: 24px; left: 40px; top: -40px; animation-delay: 1.2s; }
+    .bubble:nth-child(8) { width: 19px; height: 19px; left: -40px; top: -30px; animation-delay: 1.4s; }
+    
+    @keyframes bubbleFloat {
+      0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+      }
+      20% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1);
+      }
+      80% {
+        opacity: 1;
+        transform: translateY(-50px) scale(1.2);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-80px) scale(0.8);
+      }
+    }
+    
+    .bath-feedback {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, #4caf50, #45a049);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      animation: feedbackIn 2s ease-out forwards;
+      pointer-events: none;
+      z-index: 101;
+    }
+    
+    /* Animación de pasear */
+    .walk-animation {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 100;
+    }
+    
+    .footprint {
+      position: absolute;
+      font-size: 24px;
+      opacity: 0;
+      animation: footprintFade 2s ease-out forwards;
+    }
+    
+    .footprint:nth-child(1) { left: -40px; top: -20px; animation-delay: 0s; }
+    .footprint:nth-child(2) { left: -20px; top: -30px; animation-delay: 0.3s; }
+    .footprint:nth-child(3) { left: 0px; top: -40px; animation-delay: 0.6s; }
+    .footprint:nth-child(4) { left: 20px; top: -30px; animation-delay: 0.9s; }
+    .footprint:nth-child(5) { left: 40px; top: -20px; animation-delay: 1.2s; }
+    
+    @keyframes footprintFade {
+      0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(0deg);
+      }
+      20% {
+        opacity: 1;
+        transform: scale(1.2) rotate(5deg);
+      }
+      80% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0.8) rotate(-5deg);
+      }
+    }
+    
+    /* Animación de paseo de la mascota */
+    .mascota-paseando {
+      animation: paseoCompleto 2.5s ease-in-out forwards;
+    }
+    
+    @keyframes paseoCompleto {
+      0% {
+        transform: translateX(0) scale(1);
+        filter: brightness(1) saturate(1);
+      }
+      8% {
+        transform: translateX(-50px) scale(1.05);
+        filter: brightness(1) saturate(1);
+      }
+      16% {
+        transform: translateX(-120px) scale(1.1);
+        filter: brightness(0.95) saturate(0.9);
+      }
+      24% {
+        transform: translateX(-200px) scale(1.15);
+        filter: brightness(0.9) saturate(0.8);
+      }
+      32% {
+        transform: translateX(-300px) scale(1.2);
+        filter: brightness(0.85) saturate(0.7);
+      }
+      40% {
+        transform: translateX(-400px) scale(1.25);
+        filter: brightness(0.8) saturate(0.6);
+      }
+      48% {
+        transform: translateX(-500px) scale(1.3);
+        filter: brightness(0.75) saturate(0.5);
+      }
+      56% {
+        transform: translateX(-600px) scale(1.35);
+        filter: brightness(0.7) saturate(0.4);
+      }
+      64% {
+        transform: translateX(-500px) scale(1.3);
+        filter: brightness(0.75) saturate(0.5);
+      }
+      72% {
+        transform: translateX(-400px) scale(1.25);
+        filter: brightness(0.8) saturate(0.6);
+      }
+      80% {
+        transform: translateX(-300px) scale(1.2);
+        filter: brightness(0.85) saturate(0.7);
+      }
+      88% {
+        transform: translateX(-200px) scale(1.15);
+        filter: brightness(0.9) saturate(0.8);
+      }
+      96% {
+        transform: translateX(-100px) scale(1.05);
+        filter: brightness(0.95) saturate(0.9);
+      }
+      100% {
+        transform: translateX(0) scale(1);
+        filter: brightness(0.6) saturate(0.3) sepia(0.8) hue-rotate(45deg) contrast(1.5);
+      }
+    }
+    
+    /* Efecto de suciedad después del paseo */
+    .mascota-sucia {
+      filter: brightness(0.6) saturate(0.3) sepia(0.8) hue-rotate(45deg) contrast(1.5);
+      transition: filter 0.5s ease-in-out;
+      position: relative;
+      animation: temblorSucio 0.5s ease-in-out infinite;
+    }
+    
+    /* Efecto de mal olor */
+    .mascota-sucia::before {
+      content: '💨';
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 24px;
+      animation: malOlor 2s ease-in-out infinite;
+      z-index: 10;
+    }
+    
+    /* Efecto de suciedad visual */
+    .mascota-sucia::after {
+      content: '💩';
+      position: absolute;
+      bottom: -20px;
+      right: -10px;
+      font-size: 16px;
+      animation: caquita 3s ease-in-out infinite;
+      z-index: 10;
+    }
+    
+    /* Efecto de moscas alrededor */
+    .mascota-sucia .moscas {
+      position: absolute;
+      top: -40px;
+      left: -20px;
+      right: -20px;
+      bottom: -20px;
+      pointer-events: none;
+      z-index: 5;
+    }
+    
+    .mosca {
+      position: absolute;
+      font-size: 12px;
+      animation: vueloMosca 4s linear infinite;
+    }
+    
+    .mosca:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+    .mosca:nth-child(2) { top: 60%; left: 80%; animation-delay: 1s; }
+    .mosca:nth-child(3) { top: 40%; left: 50%; animation-delay: 2s; }
+    .mosca:nth-child(4) { top: 80%; left: 20%; animation-delay: 3s; }
+    
+    @keyframes temblorSucio {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      25% { transform: translateX(1px) rotate(0.5deg); }
+      50% { transform: translateX(-1px) rotate(-0.5deg); }
+      75% { transform: translateX(1px) rotate(0.5deg); }
+    }
+    
+    @keyframes vueloMosca {
+      0% {
+        opacity: 0;
+        transform: translateX(0) translateY(0) scale(0.5);
+      }
+      20% {
+        opacity: 1;
+        transform: translateX(10px) translateY(-5px) scale(1);
+      }
+      40% {
+        opacity: 1;
+        transform: translateX(-5px) translateY(10px) scale(0.8);
+      }
+      60% {
+        opacity: 1;
+        transform: translateX(15px) translateY(-10px) scale(1.2);
+      }
+      80% {
+        opacity: 1;
+        transform: translateX(-10px) translateY(5px) scale(0.9);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(0) translateY(0) scale(0.5);
+      }
+    }
+    
+    @keyframes malOlor {
+      0%, 100% {
+        opacity: 0.3;
+        transform: translateX(-50%) translateY(0) scale(0.8);
+      }
+      50% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-10px) scale(1.2);
+      }
+    }
+    
+    @keyframes caquita {
+      0%, 100% {
+        opacity: 0.7;
+        transform: scale(0.9) rotate(0deg);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.1) rotate(5deg);
+      }
+    }
+    
+    /* Animación de curar */
+    .cure-animation {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 100;
+    }
+    
+    .heal-particle {
+      position: absolute;
+      font-size: 20px;
+      opacity: 0;
+      animation: healFloat 2s ease-out forwards;
+    }
+    
+    .heal-particle:nth-child(1) { left: -30px; top: -40px; animation-delay: 0s; }
+    .heal-particle:nth-child(2) { left: 30px; top: -50px; animation-delay: 0.2s; }
+    .heal-particle:nth-child(3) { left: -20px; top: -60px; animation-delay: 0.4s; }
+    .heal-particle:nth-child(4) { left: 20px; top: -30px; animation-delay: 0.6s; }
+    .heal-particle:nth-child(5) { left: 0px; top: -70px; animation-delay: 0.8s; }
+    .heal-particle:nth-child(6) { left: -40px; top: -20px; animation-delay: 1s; }
+    .heal-particle:nth-child(7) { left: 40px; top: -40px; animation-delay: 1.2s; }
+    .heal-particle:nth-child(8) { left: -10px; top: -50px; animation-delay: 1.4s; }
+    
+    @keyframes healFloat {
+      0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+      }
+      20% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1.2);
+      }
+      80% {
+        opacity: 1;
+        transform: translateY(-40px) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-60px) scale(0.8);
+      }
+    }
+    .main-hero-mascota {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 1rem;
+      margin: 0;
+      position: absolute;
+      left: 0; right: 0;
+      bottom: 100px;
+      z-index: 2;
+      width: 100vw;
+      height: 340px;
+      pointer-events: none;
+    }
+    .hero-avatar, .mascota-avatar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      background: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      margin-bottom: 0;
+      position: relative;
+      pointer-events: auto;
+    }
+    .hero-nombre {
+      margin-bottom: 0.5rem;
+      margin-top: 0;
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #00c6ff;
+      text-align: center;
+      text-shadow: 0 2px 8px #0008;
+      position: absolute;
+      top: 6.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      background: none;
+      width: max-content;
+      pointer-events: none;
+    }
+    
+    .mascota-nombre {
+      margin-bottom: 0.5rem;
+      margin-top: 0;
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #ffd600;
+      text-align: center;
+      text-shadow: 0 2px 8px #0008;
+      position: absolute;
+      top: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      background: none;
+      width: max-content;
+      pointer-events: none;
+    }
+    .mascota-nombre {
+      color: #ffd600;
+    }
+    .hero-avatar svg {
+      width: 220px;
+      height: 340px;
+      max-width: 30vw;
+      max-height: 340px;
+      background: none;
+      box-shadow: none;
+      border-radius: 0;
+      margin-bottom: 0;
+      z-index: 2;
+      display: block;
+      position: relative;
+      bottom: -30px;
+    }
+    .mascota-avatar svg {
+      width: 120px;
+      height: 140px;
+      max-width: 18vw;
+      max-height: 140px;
+      background: none;
+      box-shadow: none;
+      border-radius: -20;
+      margin-bottom: 0;
+      z-index: -40;
+      display: block;
+      position: relative;
+      bottom: -30px;
+    }
+    .home-section {
+      background: #23243a;
+      border-radius: 18px;
+      box-shadow: 0 2px 16px #0002;
+      padding: 2rem 2.5rem;
+      margin: 1.5rem 0;
+      width: 100%;
+      max-width: 600px;
+      min-height: 120px;
+    }
+    .section-title {
+      font-size: 1.3rem;
+      color: #00c6ff;
+      margin-bottom: 1rem;
+      font-weight: bold;
+    }
+    .section-subtitle {
+      font-size: 1.1rem;
+      color: #ff5252;
+      margin: 1rem 0 0.5rem 0;
+      font-weight: bold;
+    }
+    .stats-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .stat-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.05);
+      padding: 0.4rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .stat-label {
+      font-size: 0.9rem;
+      color: #fff;
+      font-weight: bold;
+      min-width: 30px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 12px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.5s ease, background 0.3s ease;
+      position: relative;
+    }
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    .stat-value {
+      font-size: 0.8rem;
+      color: #fff;
+      font-weight: bold;
+      min-width: 35px;
+      text-align: right;
+    }
+    .enfermedades-container {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .enfermedades-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .enfermedad-tag {
+      background: #ff5252;
+      color: #fff;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    .comida-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .comida-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid #00c6ff;
+      border-radius: 12px;
+      padding: 0.8rem 0.5rem;
+      color: #fff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.8rem;
+    }
+    .comida-btn:hover {
+      background: #00c6ff;
+      color: #1a2340;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,198,255,0.3);
+    }
+    .comida-btn:active {
+      transform: scale(0.95);
+    }
+    .comida-emoji {
+      font-size: 1.5rem;
+    }
+    .comida-nombre {
+      font-weight: bold;
+      font-size: 0.7rem;
+    }
+    .comida-valor {
+      font-size: 0.6rem;
+      opacity: 0.8;
+      color: #4caf50;
+    }
+    .comida-btn:hover .comida-valor {
+      color: #1a2340;
+    }
+    .cerrar-menu-btn {
+      width: 100%;
+      background: #ff5252;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .cerrar-menu-btn:hover {
+      background: #d32f2f;
+    }
+    .feedback-mensaje {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.9);
+      color: #fff;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      z-index: 1000;
+      animation: feedbackIn 0.5s ease-out;
+    }
+    @keyframes feedbackIn {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+    .comida-animacion {
+      position: absolute;
+      font-size: 2rem;
+      z-index: 100;
+      pointer-events: none;
+      animation: lanzarComida 1.5s ease-out forwards;
+    }
+    @keyframes lanzarComida {
+      0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(0deg);
+      }
+      10% {
+        opacity: 1;
+        transform: scale(1.2) rotate(0deg);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1) rotate(180deg) translateY(-50px);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0.8) rotate(360deg) translateY(-100px);
+      }
+    }
+    .alimentar-opciones {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .alimentar-btn {
+      background: #fff2;
+      color: #fff;
+      border: 1.5px solid #00c6ff;
+      border-radius: 12px;
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .alimentar-btn:hover {
+      background: #00c6ff;
+      color: #1a2340;
+    }
+    .pasto-animado {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      width: 100vw;
+      height: 180px;
+      z-index: 1;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .flores {
+      position: absolute;
+      left: 0; right: 0; bottom: 40px;
+      width: 100vw;
+      height: 60px;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .abeja {
+      position: absolute;
+      width: 48px;
+      height: 48px;
+      z-index: 3;
+      animation: abejaVuelo 6s linear infinite alternate;
+    }
+    .abeja2 {
+      left: 70vw;
+      top: 180px;
+      animation-delay: 2s;
+      animation-duration: 8s;
+    }
+    .abeja3 {
+      left: 20vw;
+      top: 220px;
+      animation-delay: 1s;
+      animation-duration: 7s;
+    }
+    @keyframes pastoOndas {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    @keyframes florViento {
+      0% { transform: rotate(-5deg) scale(1); }
+      50% { transform: rotate(8deg) scale(1.08); }
+      100% { transform: rotate(-5deg) scale(1); }
+    }
+    @keyframes abejaVuelo {
+      0% { transform: translateY(0) scale(1); }
+      20% { transform: translateY(-20px) scale(1.05); }
+      40% { transform: translateY(10px) scale(0.98); }
+      60% { transform: translateY(-15px) scale(1.03); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    @media (max-width: 700px) {
+      .main-hero-mascota {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .hero-avatar svg, .mascota-avatar svg {
+        width: 120px;
+        height: 120px;
+        max-width: 80vw;
+        max-height: 120px;
+      }
+      .home-section {
+        padding: 1rem 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="home-container">
+    <nav class="nav-bar">
+      <button class="nav-btn" id="pasearBtn">Pasear</button>
+      <button class="nav-btn" id="banarBtn">Bañar</button>
+      <button class="nav-btn" id="alimentarBtn">Alimentar</button>
+      <button class="nav-btn">Adoptar/Desadoptar</button>
+      <button class="nav-btn" id="logoutBtn" style="margin-left:2rem;background:#ff5252;">Cerrar sesión</button>
+    </nav>
+    
+    <!-- Sección de estadísticas de la mascota -->
+    <section class="home-section" id="stats-section" style="position: absolute; left: 20px; top: 100px; width: 280px; max-width: 280px;">
+      <div class="section-title" style="font-size: 1rem; margin-bottom: 0.5rem;">Estado de la Mascota</div>
+      <div class="stats-container">
+        <div class="stat-bar">
+          <div class="stat-label">❤️</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="vida-bar" style="width: 100%; background: #ff5252;"></div>
+          </div>
+          <div class="stat-value" id="vida-value">100%</div>
+        </div>
+        <div class="stat-bar">
+          <div class="stat-label">🍖 Hambre</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="hambre-bar" style="width: 100%; background: #ff9800;"></div>
+          </div>
+          <div class="stat-value" id="hambre-value">100%</div>
+        </div>
+        <div class="stat-bar">
+          <div class="stat-label">😊</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="felicidad-bar" style="width: 100%; background: #4caf50;"></div>
+          </div>
+          <div class="stat-value" id="felicidad-value">100%</div>
+        </div>
+        <div class="stat-bar">
+          <div class="stat-label">🧼</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="limpieza-bar" style="width: 100%; background: #2196f3;"></div>
+          </div>
+          <div class="stat-value" id="limpieza-value">100%</div>
+        </div>
+      </div>
+      <div class="enfermedades-container" id="enfermedades-container" style="display: none;">
+        <div class="section-subtitle" style="font-size: 0.9rem;">🏥 Enfermedades</div>
+        <div class="enfermedades-list" id="enfermedades-list"></div>
+        <button class="nav-btn" id="curarBtn" style="margin-top: 0.5rem; font-size: 0.9rem; padding: 0.4rem 1rem; background: linear-gradient(135deg, #ff9800, #f57c00);">💊 Curar Todas</button>
+      </div>
+    </section>
+    
+    <!-- Menú de alimentación -->
+    <section class="home-section" id="alimentar-menu" style="position: absolute; right: 20px; top: 100px; width: 280px; max-width: 280px; display: none;">
+      <div class="section-title" style="font-size: 1rem; margin-bottom: 0.5rem;">🍽️ Alimentar Mascota</div>
+      <div class="comida-grid">
+        <button class="comida-btn" data-comida="manzana">
+          <span class="comida-emoji">🍎</span>
+          <span class="comida-nombre">Manzana</span>
+          <span class="comida-valor">+15</span>
+        </button>
+        <button class="comida-btn" data-comida="galleta">
+          <span class="comida-emoji">🍪</span>
+          <span class="comida-nombre">Galleta</span>
+          <span class="comida-valor">+10</span>
+        </button>
+        <button class="comida-btn" data-comida="pizza">
+          <span class="comida-emoji">🍕</span>
+          <span class="comida-nombre">Pizza</span>
+          <span class="comida-valor">+50</span>
+        </button>
+        <button class="comida-btn" data-comida="pastel">
+          <span class="comida-emoji">🎂</span>
+          <span class="comida-nombre">Pastel</span>
+          <span class="comida-valor">+40</span>
+        </button>
+        <button class="comida-btn" data-comida="zanahoria">
+          <span class="comida-emoji">🥕</span>
+          <span class="comida-nombre">Zanahoria</span>
+          <span class="comida-valor">+12</span>
+        </button>
+        <button class="comida-btn" data-comida="carne">
+          <span class="comida-emoji">🥩</span>
+          <span class="comida-nombre">Carne</span>
+          <span class="comida-valor">+30</span>
+        </button>
+      </div>
+      <button class="cerrar-menu-btn" id="cerrarAlimentarBtn">❌ Cerrar</button>
+    </section>
+    
+    <div class="main-hero-mascota">
+      <div class="hero-avatar">
+        <div class="hero-nombre">Nombre del Héroe</div>
+        <!-- SVG del héroe se inyecta aquí -->
+      </div>
+      <div class="mascota-avatar">
+        <div class="mascota-nombre">Nombre de la Mascota</div>
+        <!-- SVG de la mascota se inyecta aquí -->
+      </div>
+    </div>
+    <section class="home-section" id="alimentar-section" style="display:none;">
+      <div class="section-title">Alimentar y Cuidar</div>
+      <div class="alimentar-opciones">
+        <button class="alimentar-btn">Alimentar</button>
+        <button class="alimentar-btn">Curar enfermedades</button>
+        <button class="alimentar-btn">Equipar ítems</button>
+        <button class="alimentar-btn">Desequipar ítems</button>
+      </div>
+    </section>
+    <!-- Puedes agregar más secciones para Pasear, Bañar, Adoptar/Desadoptar -->
+  </div>
+  <div class="pasto-animado">
+    <svg width="100%" height="180" viewBox="0 0 1440 180" fill="none" xmlns="http://www.w3.org/2000/svg" style="position:absolute;left:0;bottom:0;width:100vw;height:180px;animation:pastoOndas 5s ease-in-out infinite alternate;">
+      <defs>
+        <linearGradient id="pastoGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7be676"/>
+          <stop offset="100%" stop-color="#2e8b57"/>
+        </linearGradient>
+      </defs>
+      <path d="M0 80 Q 360 120 720 80 T 1440 80 V180 H0Z" fill="url(#pastoGrad)"/>
+    </svg>
+  </div>
+  <div class="flores">
+    <svg style="position:absolute;left:12vw;bottom:0;animation:florViento 3.2s ease-in-out infinite alternate;" width="40" height="60" viewBox="0 0 40 60">
+      <ellipse cx="20" cy="50" rx="8" ry="10" fill="#fff"/>
+      <ellipse cx="20" cy="50" rx="3" ry="4" fill="#f99"/>
+      <ellipse cx="12" cy="45" rx="3" ry="6" fill="#ffd600"/>
+      <ellipse cx="28" cy="45" rx="3" ry="6" fill="#ffd600"/>
+      <rect x="18" y="55" width="4" height="12" rx="2" fill="#4caf50"/>
+    </svg>
+    <svg style="position:absolute;left:60vw;bottom:0;animation:florViento 2.7s ease-in-out infinite alternate;" width="36" height="54" viewBox="0 0 36 54">
+      <ellipse cx="18" cy="44" rx="7" ry="8" fill="#fff"/>
+      <ellipse cx="18" cy="44" rx="2.5" ry="3.5" fill="#f99"/>
+      <ellipse cx="10" cy="39" rx="2.5" ry="5" fill="#ffd600"/>
+      <ellipse cx="26" cy="39" rx="2.5" ry="5" fill="#ffd600"/>
+      <rect x="16" y="48" width="4" height="10" rx="2" fill="#388e3c"/>
+    </svg>
+    <svg style="position:absolute;left:35vw;bottom:0;animation:florViento 2.2s ease-in-out infinite alternate;" width="32" height="48" viewBox="0 0 32 48">
+      <ellipse cx="16" cy="38" rx="6" ry="7" fill="#fff"/>
+      <ellipse cx="16" cy="38" rx="2" ry="3" fill="#f99"/>
+      <ellipse cx="9" cy="33" rx="2" ry="4" fill="#ffd600"/>
+      <ellipse cx="23" cy="33" rx="2" ry="4" fill="#ffd600"/>
+      <rect x="14" y="41" width="4" height="8" rx="2" fill="#43a047"/>
+    </svg>
+  </div>
+
+  <svg class="abeja abeja2" viewBox="0 0 48 48">
+    <ellipse cx="24" cy="28" rx="12" ry="8" fill="#ffd600" stroke="#333" stroke-width="2"/>
+    <ellipse cx="16" cy="24" rx="4" ry="7" fill="#fff" fill-opacity=".7"/>
+    <ellipse cx="32" cy="24" rx="4" ry="7" fill="#fff" fill-opacity=".7"/>
+    <ellipse cx="24" cy="28" rx="12" ry="8" fill="none" stroke="#333" stroke-width="2"/>
+    <ellipse cx="18" cy="28" rx="2" ry="2" fill="#333"/>
+    <ellipse cx="30" cy="28" rx="2" ry="2" fill="#333"/>
+    <rect x="22" y="36" width="4" height="8" rx="2" fill="#333"/>
+  </svg>
+  <svg class="abeja abeja3" viewBox="0 0 48 48">
+    <ellipse cx="24" cy="28" rx="12" ry="8" fill="#ffd600" stroke="#333" stroke-width="2"/>
+    <ellipse cx="16" cy="24" rx="4" ry="7" fill="#fff" fill-opacity=".7"/>
+    <ellipse cx="32" cy="24" rx="4" ry="7" fill="#fff" fill-opacity=".7"/>
+    <ellipse cx="24" cy="28" rx="12" ry="8" fill="none" stroke="#333" stroke-width="2"/>
+    <ellipse cx="18" cy="28" rx="2" ry="2" fill="#333"/>
+    <ellipse cx="30" cy="28" rx="2" ry="2" fill="#333"/>
+    <rect x="22" y="36" width="4" height="8" rx="2" fill="#333"/>
+  </svg>
+  <script>
+// --- SVG HERO FUNCTION ---
+const HERO_COLORS = {
+  ThunderMan: { suit: '#1976d2', cape: '#e53935', accessory: 'capa' },
+  AquaGirl: { suit: '#00bcd4', cape: '#1976d2', accessory: 'capa' },
+  Shadow: { suit: '#222', cape: '#607d8b', accessory: 'antifaz' },
+  Blaze: { suit: '#e53935', cape: '#ffd600', accessory: 'capa' },
+  Windy: { suit: '#81d4fa', cape: '#fff', accessory: 'bufanda' },
+  'Iron Paw': { suit: '#bdbdbd', cape: '#ff6f00', accessory: 'casco' },
+  Mystic: { suit: '#8e24aa', cape: '#00e676', accessory: 'varita' },
+  Volt: { suit: '#ffd600', cape: '#1976d2', accessory: 'capa' },
+  Nova: { suit: '#ffb300', cape: '#00bcd4', accessory: 'estrella' },
+  Leaf: { suit: '#43a047', cape: '#cddc39', accessory: 'hoja' }
+};
+function heroSVGFull(hero) {
+  const c = HERO_COLORS[hero.name] || { suit: '#1976d2', cape: '#e53935', accessory: null };
+  return `
+  <svg width="180" height="260" viewBox="0 0 180 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+    ${c.cape ? `<path d="M50 180 Q90 240 130 180 Q110 210 70 180 Z" fill="${c.cape}" opacity="0.7">
+      <animate attributeName="d" values="M50 180 Q90 240 130 180 Q110 210 70 180 Z;M50 180 Q90 250 130 180 Q110 220 70 180 Z;M50 180 Q90 240 130 180 Q110 210 70 180 Z" dur="1.2s" repeatCount="indefinite"/></path>` : ''}
+    <rect x="70" y="210" width="12" height="40" rx="6" fill="${c.suit}">
+      <animateTransform attributeName="transform" type="rotate" values="-10 76 210; 10 76 210; -10 76 210" dur="1s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="98" y="210" width="12" height="40" rx="6" fill="${c.suit}">
+      <animateTransform attributeName="transform" type="rotate" values="10 104 210; -10 104 210; 10 104 210" dur="1s" repeatCount="indefinite"/>
+    </rect>
+    <ellipse cx="90" cy="160" rx="38" ry="55" fill="${c.suit}"/>
+    <rect x="65" y="200" width="50" height="10" rx="5" fill="#ffd600"/>
+    <ellipse cx="90" cy="160" rx="15" ry="13" fill="#ffd600" stroke="#e53935" stroke-width="2"/>
+    <text x="90" y="165" text-anchor="middle" font-size="16" font-family="Arial" fill="#e53935" font-weight="bold">S</text>
+    <ellipse cx="90" cy="110" rx="28" ry="30" fill="#fff" stroke="${c.suit}" stroke-width="4"/>
+    <ellipse cx="80" cy="112" rx="4" ry="7" fill="#222"/>
+    <ellipse cx="100" cy="112" rx="4" ry="7" fill="#222"/>
+    <path d="M80 125 Q90 135 100 125" stroke="#222" stroke-width="3" fill="none"/>
+    <rect x="40" y="150" width="15" height="50" rx="7" fill="${c.suit}">
+      <animateTransform attributeName="transform" type="rotate" values="-20 47 150; 20 47 150; -20 47 150" dur="1s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="125" y="150" width="15" height="50" rx="7" fill="${c.suit}">
+      <animateTransform attributeName="transform" type="rotate" values="20 132 150; -20 132 150; 20 132 150" dur="1s" repeatCount="indefinite"/>
+    </rect>
+    ${c.accessory === 'antifaz' ? '<rect x="72" y="105" width="36" height="12" rx="6" fill="#607d8b"/>' : ''}
+    ${c.accessory === 'bufanda' ? '<rect x="80" y="185" width="20" height="8" rx="4" fill="#fff"/>' : ''}
+    ${c.accessory === 'casco' ? '<ellipse cx="90" cy="90" rx="18" ry="10" fill="#bdbdbd"/>' : ''}
+    ${c.accessory === 'varita' ? '<rect x="120" y="210" width="6" height="30" rx="3" fill="#00e676"/>' : ''}
+    ${c.accessory === 'estrella' ? '<polygon points="90,80 94,92 108,92 96,100 100,112 90,105 80,112 84,100 72,92 86,92" fill="#ffd600"/>' : ''}
+    ${c.accessory === 'hoja' ? '<ellipse cx="90" cy="80" rx="8" ry="16" fill="#cddc39"/>' : ''}
+  </svg>`;
+}
+function heroSVGFullEditor({ suitColor, capeColor, accessory }) {
+  return `
+  <svg width="180" height="260" viewBox="0 0 180 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+    ${capeColor ? `<path d="M50 180 Q90 240 130 180 Q110 210 70 180 Z" fill="${capeColor}" opacity="0.7">
+      <animate attributeName="d" values="M50 180 Q90 240 130 180 Q110 210 70 180 Z;M50 180 Q90 250 130 180 Q110 220 70 180 Z;M50 180 Q90 240 130 180 Q110 210 70 180 Z" dur="1.2s" repeatCount="indefinite"/></path>` : ''}
+    <rect x="70" y="210" width="12" height="40" rx="6" fill="${suitColor}">
+      <animateTransform attributeName="transform" type="rotate" values="-10 76 210; 10 76 210; -10 76 210" dur="1s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="98" y="210" width="12" height="40" rx="6" fill="${suitColor}">
+      <animateTransform attributeName="transform" type="rotate" values="10 104 210; -10 104 210; 10 104 210" dur="1s" repeatCount="indefinite"/>
+    </rect>
+    <ellipse cx="90" cy="160" rx="38" ry="55" fill="${suitColor}"/>
+    <rect x="65" y="200" width="50" height="10" rx="5" fill="#ffd600"/>
+    <ellipse cx="90" cy="160" rx="15" ry="13" fill="#ffd600" stroke="#e53935" stroke-width="2"/>
+    <text x="90" y="165" text-anchor="middle" font-size="16" font-family="Arial" fill="#e53935" font-weight="bold">S</text>
+    <ellipse cx="90" cy="110" rx="28" ry="30" fill="#fff" stroke="${suitColor}" stroke-width="4"/>
+    <ellipse cx="80" cy="112" rx="4" ry="7" fill="#222"/>
+    <ellipse cx="100" cy="112" rx="4" ry="7" fill="#222"/>
+    <path d="M80 125 Q90 135 100 125" stroke="#222" stroke-width="3" fill="none"/>
+    <rect x="40" y="150" width="15" height="50" rx="7" fill="${suitColor}">
+      <animateTransform attributeName="transform" type="rotate" values="-20 47 150; 20 47 150; -20 47 150" dur="1s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="125" y="150" width="15" height="50" rx="7" fill="${suitColor}">
+      <animateTransform attributeName="transform" type="rotate" values="20 132 150; -20 132 150; 20 132 150" dur="1s" repeatCount="indefinite"/>
+    </rect>
+    ${accessory === 'antifaz' ? '<rect x="72" y="105" width="36" height="12" rx="6" fill="#607d8b"/>' : ''}
+    ${accessory === 'bufanda' ? '<rect x="80" y="185" width="20" height="8" rx="4" fill="#fff"/>' : ''}
+    ${accessory === 'casco' ? '<ellipse cx="90" cy="90" rx="18" ry="10" fill="#bdbdbd"/>' : ''}
+    ${accessory === 'varita' ? '<rect x="120" y="210" width="6" height="30" rx="3" fill="#00e676"/>' : ''}
+    ${accessory === 'estrella' ? '<polygon points="90,80 94,92 108,92 96,100 100,112 90,105 80,112 84,100 72,92 86,92" fill="#ffd600"/>' : ''}
+    ${accessory === 'hoja' ? '<ellipse cx="90" cy="80" rx="8" ry="16" fill="#cddc39"/>' : ''}
+  </svg>`;
+}
+// --- END SVG HERO FUNCTION ---
+
+// --- SVGs de mascotas predefinidas ---
+const MASCOTA_SVGS = {
+  'Bolt': `<svg style="width:120px;height:140px;" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="90" cy="110" rx="55" ry="38" fill="#F9E4B7" stroke="#333" stroke-width="4"/>
+    <ellipse cx="90" cy="70" rx="45" ry="38" fill="#F9E4B7" stroke="#333" stroke-width="4"/>
+    <ellipse cx="60" cy="55" rx="13" ry="16" fill="#B8865B" stroke="#333" stroke-width="3"/>
+    <ellipse cx="120" cy="55" rx="13" ry="16" fill="#B8865B" stroke="#333" stroke-width="3"/>
+    <ellipse cx="90" cy="90" rx="22" ry="16" fill="#fff" stroke="#333" stroke-width="2"/>
+    <ellipse cx="90" cy="95" rx="6" ry="4" fill="#333"/>
+    <ellipse cx="90" cy="105" rx="7" ry="4" fill="#F99"/>
+    <ellipse class="ojo ojo-izquierdo" cx="75" cy="75" rx="7" ry="10" fill="#fff" stroke="#333" stroke-width="2"/>
+    <ellipse class="ojo ojo-derecho" cx="105" cy="75" rx="7" ry="10" fill="#fff" stroke="#333" stroke-width="2"/>
+    <ellipse class="pupila pupila-izquierda" cx="75" cy="77" rx="3" ry="4" fill="#333"/>
+    <ellipse class="pupila pupila-derecha" cx="105" cy="77" rx="3" ry="4" fill="#333"/>
+    <path d="M70 65 Q75 70 80 65" stroke="#333" stroke-width="2" fill="none"/>
+    <path d="M100 65 Q105 70 110 65" stroke="#333" stroke-width="2" fill="none"/>
+    <path d="M85 102 Q90 110 95 102" stroke="#e55" stroke-width="2" fill="none"/>
+  </svg>`,
+  'Whiskers': `<svg style="width:120px;height:140px;" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="90" cy="115" rx="48" ry="32" fill="#D1D5DB" stroke="#888" stroke-width="4"/>
+    <path d="M125 135 Q155 120 120 110 Q145 140 110 120" stroke="#888" stroke-width="6" fill="none"/>
+    <ellipse cx="90" cy="70" rx="36" ry="30" fill="#D1D5DB" stroke="#888" stroke-width="4"/>
+    <polygon points="68,52 78,18 90,55" fill="#D1D5DB" stroke="#888" stroke-width="4"/>
+    <polygon points="112,52 124,18 90,55" fill="#D1D5DB" stroke="#888" stroke-width="4"/>
+    <ellipse cx="75" cy="90" rx="6" ry="4" fill="#F99"/>
+    <ellipse cx="105" cy="90" rx="6" ry="4" fill="#F99"/>
+    <ellipse cx="90" cy="95" rx="10" ry="7" fill="#fff" stroke="#888" stroke-width="2"/>
+    <ellipse cx="90" cy="98" rx="2.5" ry="1.5" fill="#E55"/>
+    <ellipse class="ojo ojo-izquierdo" cx="80" cy="77" rx="7" ry="9" fill="#fff" stroke="#333" stroke-width="2"/>
+    <ellipse class="ojo ojo-derecho" cx="100" cy="77" rx="7" ry="9" fill="#fff" stroke="#333" stroke-width="2"/>
+    <ellipse class="pupila pupila-izquierda" cx="80" cy="79" rx="2.5" ry="3.5" fill="#333"/>
+    <ellipse class="pupila pupila-derecha" cx="100" cy="79" rx="2.5" ry="3.5" fill="#333"/>
+    <path d="M75 68 Q80 72 85 68" stroke="#888" stroke-width="2" fill="none"/>
+    <path d="M95 68 Q100 72 105 68" stroke="#888" stroke-width="2" fill="none"/>
+    <path d="M87 104 Q90 108 93 104" stroke="#E55" stroke-width="2" fill="none"/>
+    <line x1="85" y1="98" x2="60" y2="100" stroke="#888" stroke-width="1.5"/>
+    <line x1="85" y1="101" x2="60" y2="110" stroke="#888" stroke-width="1.5"/>
+    <line x1="85" y1="95" x2="60" y2="90" stroke="#888" stroke-width="1.5"/>
+    <line x1="95" y1="98" x2="120" y2="100" stroke="#888" stroke-width="1.5"/>
+    <line x1="95" y1="101" x2="120" y2="110" stroke="#888" stroke-width="1.5"/>
+    <line x1="95" y1="95" x2="120" y2="90" stroke="#888" stroke-width="1.5"/>
+  </svg>`,
+  'Draco': `<svg style="width:120px;height:140px;" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="90" cy="110" rx="50" ry="35" fill="#8B4513" stroke="#654321" stroke-width="4"/>
+    <ellipse cx="90" cy="65" rx="40" ry="30" fill="#8B4513" stroke="#654321" stroke-width="4"/>
+    <polygon points="90,35 100,15 90,25 80,15" fill="#FF4500" stroke="#8B0000" stroke-width="2"/>
+    <ellipse cx="75" cy="60" rx="8" ry="12" fill="#FFD700" stroke="#B8860B" stroke-width="2"/>
+    <ellipse cx="105" cy="60" rx="8" ry="12" fill="#FFD700" stroke="#B8860B" stroke-width="2"/>
+    <ellipse cx="90" cy="85" rx="15" ry="10" fill="#fff" stroke="#654321" stroke-width="2"/>
+    <ellipse cx="90" cy="88" rx="4" ry="2" fill="#333"/>
+    <ellipse cx="85" cy="95" rx="3" ry="2" fill="#FF4500"/>
+    <ellipse cx="95" cy="95" rx="3" ry="2" fill="#FF4500"/>
+    <path d="M80 50 Q85 55 90 50" stroke="#654321" stroke-width="2" fill="none"/>
+    <path d="M90 50 Q95 55 100 50" stroke="#654321" stroke-width="2" fill="none"/>
+  </svg>`,
+  'Fluffy': `<svg style="width:120px;height:140px;" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="90" cy="110" rx="45" ry="30" fill="#F5F5DC" stroke="#DEB887" stroke-width="4"/>
+    <ellipse cx="90" cy="70" rx="35" ry="25" fill="#F5F5DC" stroke="#DEB887" stroke-width="4"/>
+    <ellipse cx="75" cy="60" rx="8" ry="10" fill="#FF69B4" stroke="#C71585" stroke-width="2"/>
+    <ellipse cx="105" cy="60" rx="8" ry="10" fill="#FF69B4" stroke="#C71585" stroke-width="2"/>
+    <ellipse cx="90" cy="85" rx="12" ry="8" fill="#fff" stroke="#DEB887" stroke-width="2"/>
+    <ellipse cx="90" cy="88" rx="3" ry="1.5" fill="#333"/>
+    <ellipse cx="85" cy="95" rx="2" ry="1.5" fill="#FF69B4"/>
+    <ellipse cx="95" cy="95" rx="2" ry="1.5" fill="#FF69B4"/>
+    <path d="M80 55 Q85 60 90 55" stroke="#DEB887" stroke-width="2" fill="none"/>
+    <path d="M90 55 Q95 60 100 55" stroke="#DEB887" stroke-width="2" fill="none"/>
+  </svg>`,
+  'Spike': `<svg style="width:120px;height:140px;" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="90" cy="110" rx="40" ry="25" fill="#808080" stroke="#696969" stroke-width="4"/>
+    <ellipse cx="90" cy="70" rx="30" ry="20" fill="#808080" stroke="#696969" stroke-width="4"/>
+    <ellipse cx="75" cy="65" rx="6" ry="8" fill="#000" stroke="#333" stroke-width="2"/>
+    <ellipse cx="105" cy="65" rx="6" ry="8" fill="#000" stroke="#333" stroke-width="2"/>
+    <ellipse cx="90" cy="85" rx="10" ry="6" fill="#fff" stroke="#696969" stroke-width="2"/>
+    <ellipse cx="90" cy="87" rx="2" ry="1" fill="#333"/>
+    <ellipse cx="85" cy="92" rx="1.5" ry="1" fill="#000"/>
+    <ellipse cx="95" cy="92" rx="1.5" ry="1" fill="#000"/>
+    <path d="M80 60 Q85 65 90 60" stroke="#696969" stroke-width="2" fill="none"/>
+    <path d="M90 60 Q95 65 100 60" stroke="#696969" stroke-width="2" fill="none"/>
+  </svg>`,
+  'Sky': `<svg style="width:120px;height:140px;" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="90" cy="110" rx="45" ry="30" fill="#87CEEB" stroke="#4682B4" stroke-width="4"/>
+    <ellipse cx="90" cy="70" rx="35" ry="25" fill="#87CEEB" stroke="#4682B4" stroke-width="4"/>
+    <ellipse cx="75" cy="60" rx="8" ry="10" fill="#FFD700" stroke="#B8860B" stroke-width="2"/>
+    <ellipse cx="105" cy="60" rx="8" ry="10" fill="#FFD700" stroke="#B8860B" stroke-width="2"/>
+    <ellipse cx="90" cy="85" rx="12" ry="8" fill="#fff" stroke="#4682B4" stroke-width="2"/>
+    <ellipse cx="90" cy="88" rx="3" ry="1.5" fill="#333"/>
+    <ellipse cx="85" cy="95" rx="2" ry="1.5" fill="#FFD700"/>
+    <ellipse cx="95" cy="95" rx="2" ry="1.5" fill="#FFD700"/>
+    <path d="M80 55 Q85 60 90 55" stroke="#4682B4" stroke-width="2" fill="none"/>
+    <path d="M90 55 Q95 60 100 55" stroke="#4682B4" stroke-width="2" fill="none"/>
+  </svg>`,
+  'Rocky': `<svg style="width:120px;height:140px;" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="90" cy="110" rx="50" ry="35" fill="#8FBC8F" stroke="#556B2F" stroke-width="4"/>
+    <ellipse cx="90" cy="65" rx="40" ry="25" fill="#8FBC8F" stroke="#556B2F" stroke-width="4"/>
+    <ellipse cx="75" cy="60" rx="6" ry="8" fill="#000" stroke="#333" stroke-width="2"/>
+    <ellipse cx="105" cy="60" rx="6" ry="8" fill="#000" stroke="#333" stroke-width="2"/>
+    <ellipse cx="90" cy="85" rx="10" ry="6" fill="#fff" stroke="#556B2F" stroke-width="2"/>
+    <ellipse cx="90" cy="87" rx="2" ry="1" fill="#333"/>
+    <ellipse cx="85" cy="92" rx="1.5" ry="1" fill="#8FBC8F"/>
+    <ellipse cx="95" cy="92" rx="1.5" ry="1" fill="#8FBC8F"/>
+    <path d="M80 60 Q85 65 90 60" stroke="#556B2F" stroke-width="2" fill="none"/>
+    <path d="M90 60 Q95 65 100 60" stroke="#556B2F" stroke-width="2" fill="none"/>
+  </svg>`,
+  'Frost': `<svg style="width:120px;height:140px;" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="90" cy="110" rx="45" ry="30" fill="#F0F8FF" stroke="#B0C4DE" stroke-width="4"/>
+    <ellipse cx="90" cy="70" rx="35" ry="25" fill="#F0F8FF" stroke="#B0C4DE" stroke-width="4"/>
+    <ellipse cx="75" cy="60" rx="8" ry="10" fill="#87CEEB" stroke="#4682B4" stroke-width="2"/>
+    <ellipse cx="105" cy="60" rx="8" ry="10" fill="#87CEEB" stroke="#4682B4" stroke-width="2"/>
+    <ellipse cx="90" cy="85" rx="12" ry="8" fill="#fff" stroke="#B0C4DE" stroke-width="2"/>
+    <ellipse cx="90" cy="88" rx="3" ry="1.5" fill="#333"/>
+    <ellipse cx="85" cy="95" rx="2" ry="1.5" fill="#87CEEB"/>
+    <ellipse cx="95" cy="95" rx="2" ry="1.5" fill="#87CEEB"/>
+    <path d="M80 55 Q85 60 90 55" stroke="#B0C4DE" stroke-width="2" fill="none"/>
+    <path d="M90 55 Q95 60 100 55" stroke="#B0C4DE" stroke-width="2" fill="none"/>
+  </svg>`,
+  'Spark': `<svg style="width:120px;height:140px;" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="90" cy="110" rx="35" ry="25" fill="#D3D3D3" stroke="#A9A9A9" stroke-width="4"/>
+    <ellipse cx="90" cy="70" rx="25" ry="20" fill="#D3D3D3" stroke="#A9A9A9" stroke-width="4"/>
+    <ellipse cx="75" cy="65" rx="6" ry="8" fill="#FFD700" stroke="#B8860B" stroke-width="2"/>
+    <ellipse cx="105" cy="65" rx="6" ry="8" fill="#FFD700" stroke="#B8860B" stroke-width="2"/>
+    <ellipse cx="90" cy="85" rx="8" ry="5" fill="#fff" stroke="#A9A9A9" stroke-width="2"/>
+    <ellipse cx="90" cy="87" rx="2" ry="1" fill="#333"/>
+    <ellipse cx="85" cy="92" rx="1.5" ry="1" fill="#FFD700"/>
+    <ellipse cx="95" cy="92" rx="1.5" ry="1" fill="#FFD700"/>
+    <path d="M80 60 Q85 65 90 60" stroke="#A9A9A9" stroke-width="2" fill="none"/>
+    <path d="M90 60 Q95 65 100 60" stroke="#A9A9A9" stroke-width="2" fill="none"/>
+  </svg>`,
+  'Sunny': `<svg style="width:120px;height:140px;" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="90" cy="110" rx="40" ry="25" fill="#FFD700" stroke="#FFA500" stroke-width="4"/>
+    <ellipse cx="90" cy="70" rx="30" ry="20" fill="#FFD700" stroke="#FFA500" stroke-width="4"/>
+    <ellipse cx="75" cy="60" rx="8" ry="10" fill="#FF4500" stroke="#8B0000" stroke-width="2"/>
+    <ellipse cx="105" cy="60" rx="8" ry="10" fill="#FF4500" stroke="#8B0000" stroke-width="2"/>
+    <ellipse cx="90" cy="85" rx="10" ry="6" fill="#fff" stroke="#FFA500" stroke-width="2"/>
+    <ellipse cx="90" cy="87" rx="2" ry="1" fill="#333"/>
+    <ellipse cx="85" cy="92" rx="1.5" ry="1" fill="#FF4500"/>
+    <ellipse cx="95" cy="92" rx="1.5" ry="1" fill="#FF4500"/>
+    <path d="M80 55 Q85 60 90 55" stroke="#FFA500" stroke-width="2" fill="none"/>
+    <path d="M90 55 Q95 60 100 55" stroke="#FFA500" stroke-width="2" fill="none"/>
+  </svg>`
+};
+// --- END SVGs mascotas ---
+
+// Validación y renderizado de héroe y mascota seleccionados
+function isValid(val) {
+  return val && val !== 'null' && val !== 'undefined' && val !== '';
+}
+const token = localStorage.getItem('gameToken');
+const heroeId = localStorage.getItem('heroeSeleccionado');
+const mascotaStr = localStorage.getItem('mascotaSeleccionada');
+if (!isValid(token)) {
+  window.location.href = 'index.html';
+} else if (!isValid(heroeId)) {
+  window.location.href = 'elegir.html';
+} else if (!isValid(mascotaStr)) {
+  window.location.href = 'elegirMascota.html';
+}
+
+// Mostrar datos del héroe y mascota
+async function renderHomeAvatars() {
+  // Héroe
+  let heroe = null;
+  try {
+    const res = await fetch('/api/heroes/' + heroeId, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (res.ok) heroe = await res.json();
+  } catch {}
+  if (heroe) {
+    // Actualizar solo el texto del nombre
+    document.querySelector('.hero-nombre').textContent = heroe.name || 'Héroe';
+    
+    // Actualizar solo el SVG del héroe
+    let svgHero = '';
+    if (heroe.suitColor) {
+      svgHero = heroSVGFullEditor(heroe).replace('<svg ', '<svg style="width:220px;height:340px;" ');
+    } else {
+      svgHero = heroSVGFull(heroe).replace('<svg ', '<svg style="width:220px;height:340px;" ');
+    }
+    
+    // Buscar el contenedor del SVG y actualizarlo
+    let heroContainer = document.querySelector('.hero-avatar');
+    let existingSvg = heroContainer.querySelector('svg');
+    if (existingSvg) {
+      existingSvg.outerHTML = svgHero || `<svg width='220' height='340'><rect width='220' height='340' rx='30' fill='#1976d2'/><text x='50%' y='50%' text-anchor='middle' fill='#fff' font-size='32' dy='.3em'>Héroe</text></svg>`;
+    } else {
+      heroContainer.insertAdjacentHTML('beforeend', svgHero || `<svg width='220' height='340'><rect width='220' height='340' rx='30' fill='#1976d2'/><text x='50%' y='50%' text-anchor='middle' fill='#fff' font-size='32' dy='.3em'>Héroe</text></svg>`);
+    }
+  } else {
+    document.querySelector('.hero-nombre').textContent = 'Héroe';
+  }
+  // Mascota
+  let mascota = null;
+  try {
+    if (mascotaStr.startsWith('{')) {
+      mascota = JSON.parse(mascotaStr);
+    } else {
+      const res = await fetch('/api/pets/' + mascotaStr, {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      if (res.ok) mascota = await res.json();
+    }
+  } catch (err) {
+    console.error('Error obteniendo mascota:', err);
+  }
+  
+  if (mascota) {
+    console.log('Mascota encontrada:', mascota.name, mascota.type);
+    
+    // Actualizar solo el texto del nombre
+    document.querySelector('.mascota-nombre').textContent = mascota.name || 'Mascota';
+    
+    // Buscar SVG de la mascota
+    let svgMascota = MASCOTA_SVGS[mascota.name];
+    if (svgMascota) {
+      console.log('SVG encontrado para:', mascota.name);
+      // Buscar el contenedor del SVG y actualizarlo
+      let mascotaContainer = document.querySelector('.mascota-avatar');
+      let existingSvg = mascotaContainer.querySelector('svg');
+      if (existingSvg) {
+        existingSvg.outerHTML = svgMascota;
+      } else {
+        mascotaContainer.insertAdjacentHTML('beforeend', svgMascota);
+      }
+    } else {
+      console.log('No se encontró SVG para:', mascota.name, 'Usando placeholder');
+      let mascotaContainer = document.querySelector('.mascota-avatar');
+      let existingSvg = mascotaContainer.querySelector('svg');
+      if (existingSvg) {
+        existingSvg.outerHTML = `<svg width='120' height='140'><ellipse cx='60' cy='70' rx='55' ry='60' fill='#ffd600'/><text x='50%' y='50%' text-anchor='middle' fill='#fff' font-size='24' dy='.3em'>${mascota.name}</text></svg>`;
+      } else {
+        mascotaContainer.insertAdjacentHTML('beforeend', `<svg width='120' height='140'><ellipse cx='60' cy='70' rx='55' ry='60' fill='#ffd600'/><text x='50%' y='50%' text-anchor='middle' fill='#fff' font-size='24' dy='.3em'>${mascota.name}</text></svg>`);
+      }
+    }
+  } else {
+    console.log('No se pudo obtener mascota, usando placeholder');
+    document.querySelector('.mascota-nombre').textContent = 'Mascota';
+  }
+}
+
+// Función para cargar y mostrar estadísticas de la mascota
+async function cargarEstadisticasMascota() {
+  const mascotaId = localStorage.getItem('mascotaSeleccionada');
+  if (!mascotaId) return;
+
+  try {
+    const response = await fetch(`/api/pets/${mascotaId}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    
+    if (response.ok) {
+      const mascota = await response.json();
+      actualizarEstadisticas(mascota);
+    } else {
+      console.error('Error al cargar estadísticas:', response.status);
+    }
+  } catch (error) {
+    console.error('Error al cargar estadísticas:', error);
+  }
+}
+
+// Función para actualizar las barras de estadísticas
+function actualizarEstadisticas(mascota) {
+  // Actualizar barras de progreso
+  actualizarBarra('vida', mascota.vida || 100, '#ff5252');
+  actualizarBarra('hambre', mascota.hambre || 100, '#ff9800');
+  actualizarBarra('felicidad', mascota.felicidad || 100, '#4caf50');
+  actualizarBarra('limpieza', mascota.limpieza || 100, '#2196f3');
+  
+  // Verificar si la mascota debe estar sucia basada en su limpieza
+  verificarSuciedadMascota(mascota.limpieza || 100);
+  
+  // Mostrar enfermedades si las hay
+  const enfermedadesContainer = document.getElementById('enfermedades-container');
+  const enfermedadesList = document.getElementById('enfermedades-list');
+  
+  if (mascota.enfermedades && mascota.enfermedades.length > 0) {
+    enfermedadesContainer.style.display = 'block';
+    enfermedadesList.innerHTML = '';
+    
+    mascota.enfermedades.forEach(enfermedad => {
+      const tag = document.createElement('div');
+      tag.className = 'enfermedad-tag';
+      tag.textContent = enfermedad.nombre;
+      enfermedadesList.appendChild(tag);
+    });
+  } else {
+    enfermedadesContainer.style.display = 'none';
+  }
+}
+
+// Función para actualizar una barra específica
+function actualizarBarra(tipo, valor, color) {
+  const barra = document.getElementById(`${tipo}-bar`);
+  const valorElement = document.getElementById(`${tipo}-value`);
+  
+  if (barra && valorElement) {
+    // Asegurar que el valor esté entre 0 y 100
+    const valorNormalizado = Math.max(0, Math.min(100, valor));
+    
+    // Actualizar el ancho de la barra
+    barra.style.width = `${valorNormalizado}%`;
+    barra.style.background = color;
+    
+    // Actualizar el texto del valor
+    valorElement.textContent = `${Math.round(valorNormalizado)}%`;
+    
+    // Cambiar color según el valor (lógica especial para hambre)
+    if (tipo === 'hambre') {
+      // Para hambre: 0% = muy llena, 100% = muy hambrienta
+      if (valorNormalizado >= 80) {
+        barra.style.background = '#ff5252'; // Rojo para muy hambrienta
+      } else if (valorNormalizado >= 50) {
+        barra.style.background = '#ff9800'; // Naranja para hambrienta
+      } else if (valorNormalizado >= 20) {
+        barra.style.background = '#ffd600'; // Amarillo para algo hambrienta
+      } else {
+        barra.style.background = '#4caf50'; // Verde para llena
+      }
+    } else {
+      // Para otras estadísticas: 0% = malo, 100% = bueno
+      if (valorNormalizado < 20) {
+        barra.style.background = '#ff5252'; // Rojo para valores bajos
+      } else if (valorNormalizado < 50) {
+        barra.style.background = '#ff9800'; // Naranja para valores medios-bajos
+      } else if (valorNormalizado < 80) {
+        barra.style.background = '#ffd600'; // Amarillo para valores medios
+      } else {
+        barra.style.background = color; // Color original para valores altos
+      }
+    }
+  }
+}
+
+// Cargar estadísticas al iniciar
+renderHomeAvatars();
+cargarEstadisticasMascota();
+
+// Actualizar estadísticas cada 30 segundos
+setInterval(cargarEstadisticasMascota, 30000);
+
+// Funcionalidad de alimentar
+document.getElementById('alimentarBtn').onclick = function() {
+  const menu = document.getElementById('alimentar-menu');
+  menu.style.display = 'block';
+};
+
+document.getElementById('cerrarAlimentarBtn').onclick = function() {
+  const menu = document.getElementById('alimentar-menu');
+  menu.style.display = 'none';
+};
+
+// Manejar clics en botones de comida
+document.querySelectorAll('.comida-btn').forEach(btn => {
+  btn.onclick = async function() {
+    const comida = this.getAttribute('data-comida');
+    const mascotaId = localStorage.getItem('mascotaSeleccionada');
+    
+    if (!mascotaId) {
+      mostrarFeedback('❌ No hay mascota seleccionada');
+      return;
+    }
+    
+    try {
+      // Mostrar feedback de carga
+      this.style.opacity = '0.5';
+      this.style.pointerEvents = 'none';
+      
+      // Obtener emoji de la comida
+      const emoji = this.querySelector('.comida-emoji').textContent;
+      
+      // Crear animación de lanzamiento de comida
+      lanzarComidaAnimacion(emoji);
+      
+      const response = await fetch(`/api/pets/${mascotaId}/feed`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ comida: comida })
+      });
+      
+      if (response.ok) {
+        const mascota = await response.json();
+        
+        // Mostrar feedback de éxito después de la animación
+        setTimeout(() => {
+          mostrarFeedback(`${emoji} ¡Mascota alimentada!`);
+        }, 800);
+        
+        // Actualizar estadísticas inmediatamente
+        actualizarEstadisticas(mascota);
+        
+        // Cerrar menú después de 2 segundos
+        setTimeout(() => {
+          document.getElementById('alimentar-menu').style.display = 'none';
+        }, 2000);
+        
+      } else {
+        const error = await response.json();
+        mostrarFeedback(`❌ Error: ${error.error}`);
+      }
+      
+    } catch (error) {
+      console.error('Error al alimentar:', error);
+      mostrarFeedback('❌ Error de conexión');
+    } finally {
+      // Restaurar botón
+      this.style.opacity = '1';
+      this.style.pointerEvents = 'auto';
+    }
+  };
+});
+
+// Función para crear la animación de lanzamiento de comida
+function lanzarComidaAnimacion(emoji) {
+  // Obtener posiciones del héroe y la mascota
+  const heroAvatar = document.querySelector('.hero-avatar');
+  const mascotaAvatar = document.querySelector('.mascota-avatar');
+  
+  if (!heroAvatar || !mascotaAvatar) return;
+  
+  const heroRect = heroAvatar.getBoundingClientRect();
+  const mascotaRect = mascotaAvatar.getBoundingClientRect();
+  
+  // Crear elemento de comida animada
+  const comidaElement = document.createElement('div');
+  comidaElement.className = 'comida-animacion';
+  comidaElement.textContent = emoji;
+  
+  // Posicionar en el centro del héroe
+  const startX = heroRect.left + heroRect.width / 2;
+  const startY = heroRect.top + heroRect.height / 2;
+  
+  // Posición final (mascota)
+  const endX = mascotaRect.left + mascotaRect.width / 2;
+  const endY = mascotaRect.top + mascotaRect.height / 2;
+  
+  // Aplicar estilos iniciales
+  comidaElement.style.left = `${startX}px`;
+  comidaElement.style.top = `${startY}px`;
+  comidaElement.style.transform = 'translate(-50%, -50%)';
+  
+  // Agregar al DOM
+  document.body.appendChild(comidaElement);
+  
+  // Animar hacia la mascota
+  const animation = comidaElement.animate([
+    {
+      left: `${startX}px`,
+      top: `${startY}px`,
+      transform: 'translate(-50%, -50%) scale(0.5) rotate(0deg)',
+      opacity: 0
+    },
+    {
+      left: `${startX}px`,
+      top: `${startY}px`,
+      transform: 'translate(-50%, -50%) scale(1.2) rotate(0deg)',
+      opacity: 1
+    },
+    {
+      left: `${endX}px`,
+      top: `${endY - 50}px`,
+      transform: 'translate(-50%, -50%) scale(1) rotate(180deg)',
+      opacity: 1
+    },
+    {
+      left: `${endX}px`,
+      top: `${endY - 100}px`,
+      transform: 'translate(-50%, -50%) scale(0.8) rotate(360deg)',
+      opacity: 0
+    }
+  ], {
+    duration: 1500,
+    easing: 'ease-out'
+  });
+  
+  // Limpiar elemento después de la animación
+  animation.onfinish = () => {
+    comidaElement.remove();
+  };
+}
+
+// Función para mostrar feedback
+function mostrarFeedback(mensaje) {
+  // Remover feedback anterior si existe
+  const feedbackAnterior = document.querySelector('.feedback-mensaje');
+  if (feedbackAnterior) {
+    feedbackAnterior.remove();
+  }
+  
+  // Crear nuevo feedback
+  const feedback = document.createElement('div');
+  feedback.className = 'feedback-mensaje';
+  feedback.textContent = mensaje;
+  document.body.appendChild(feedback);
+  
+  // Remover después de 2 segundos
+  setTimeout(() => {
+    feedback.remove();
+  }, 2000);
+}
+
+// Función para verificar si la mascota debe estar sucia basada en su limpieza
+function verificarSuciedadMascota(limpieza) {
+  const mascotaAvatar = document.querySelector('.mascota-avatar');
+  if (!mascotaAvatar) return;
+  
+  // Si la limpieza es menor a 50, la mascota debe verse sucia
+  if (limpieza < 50 && !mascotaAvatar.classList.contains('mascota-sucia')) {
+    mascotaAvatar.classList.add('mascota-sucia');
+    
+    // Agregar moscas si no existen
+    if (!mascotaAvatar.querySelector('.moscas')) {
+      const moscasContainer = document.createElement('div');
+      moscasContainer.className = 'moscas';
+      
+      // Crear 4 moscas
+      for (let i = 0; i < 4; i++) {
+        const mosca = document.createElement('div');
+        mosca.className = 'mosca';
+        mosca.textContent = '🪰';
+        moscasContainer.appendChild(mosca);
+      }
+      
+      mascotaAvatar.appendChild(moscasContainer);
+    }
+  } else if (limpieza >= 50 && mascotaAvatar.classList.contains('mascota-sucia')) {
+    // Si la limpieza es alta, remover suciedad
+    mascotaAvatar.classList.remove('mascota-sucia');
+    const moscas = mascotaAvatar.querySelector('.moscas');
+    if (moscas) {
+      moscas.remove();
+    }
+  }
+}
+
+// Funcionalidad de bañar mascota
+document.getElementById('banarBtn').onclick = async function() {
+  const token = localStorage.getItem('gameToken');
+  const mascotaId = localStorage.getItem('mascotaSeleccionada');
+  
+  console.log('Token:', token);
+  console.log('Mascota ID:', mascotaId);
+  
+  if (!token || !mascotaId) {
+    mostrarFeedback('❌ Error: No se encontró la mascota');
+    console.error('Token o mascotaId faltante:', { token: !!token, mascotaId: !!mascotaId });
+    return;
+  }
+  
+  // Deshabilitar botón durante la acción
+  this.style.opacity = '0.5';
+  this.style.pointerEvents = 'none';
+  
+  try {
+    // Crear animación de espuma
+    crearAnimacionEspuma();
+    
+    // Llamar al endpoint de bañar
+    const response = await fetch(`/api/pets/${mascotaId}/bath`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    });
+    
+    if (response.ok) {
+      const mascota = await response.json();
+      
+      // Remover suciedad de la mascota
+      const mascotaAvatar = document.querySelector('.mascota-avatar');
+      if (mascotaAvatar) {
+        mascotaAvatar.classList.remove('mascota-sucia');
+        // Remover las moscas
+        const moscas = mascotaAvatar.querySelector('.moscas');
+        if (moscas) {
+          moscas.remove();
+        }
+      }
+      
+      // Mostrar feedback de éxito después de la animación
+      setTimeout(() => {
+        mostrarFeedback('🧼 ¡Mascota bañada! +10 Felicidad, +100 Limpieza');
+      }, 1500);
+      
+      // Actualizar estadísticas inmediatamente
+      actualizarEstadisticas(mascota);
+      
+    } else {
+      const error = await response.json();
+      mostrarFeedback(`❌ Error: ${error.error}`);
+    }
+    
+  } catch (error) {
+    console.error('Error al bañar:', error);
+    mostrarFeedback('❌ Error de conexión');
+  } finally {
+    // Restaurar botón
+    this.style.opacity = '1';
+    this.style.pointerEvents = 'auto';
+  }
+};
+
+// Función para crear animación de espuma
+function crearAnimacionEspuma() {
+  const mascotaAvatar = document.querySelector('.mascota-avatar');
+  if (!mascotaAvatar) return;
+  
+  const mascotaRect = mascotaAvatar.getBoundingClientRect();
+  
+  // Crear contenedor de animación
+  const bathAnimation = document.createElement('div');
+  bathAnimation.className = 'bath-animation';
+  
+  // Crear 8 burbujas de espuma
+  for (let i = 0; i < 8; i++) {
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bathAnimation.appendChild(bubble);
+  }
+  
+  // Posicionar en el centro de la mascota
+  bathAnimation.style.left = `${mascotaRect.left + mascotaRect.width / 2}px`;
+  bathAnimation.style.top = `${mascotaRect.top + mascotaRect.height / 2}px`;
+  
+  // Agregar al DOM
+  document.body.appendChild(bathAnimation);
+  
+  // Remover después de 3 segundos
+  setTimeout(() => {
+    bathAnimation.remove();
+  }, 3000);
+}
+
+// Funcionalidad de pasear mascota
+document.getElementById('pasearBtn').onclick = async function() {
+  const token = localStorage.getItem('gameToken');
+  const mascotaId = localStorage.getItem('mascotaSeleccionada');
+  
+  console.log('Token:', token);
+  console.log('Mascota ID:', mascotaId);
+  
+  if (!token || !mascotaId) {
+    mostrarFeedback('❌ Error: No se encontró la mascota');
+    console.error('Token o mascotaId faltante:', { token: !!token, mascotaId: !!mascotaId });
+    return;
+  }
+  
+  // Deshabilitar botón durante la acción
+  this.style.opacity = '0.5';
+  this.style.pointerEvents = 'none';
+  
+  try {
+    // Crear animación de huellas y paseo de la mascota
+    crearAnimacionHuellas();
+    animarPaseoMascota();
+    
+    // Llamar al endpoint de pasear
+    const response = await fetch(`/api/pets/${mascotaId}/walk`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    });
+    
+    if (response.ok) {
+      const mascota = await response.json();
+      
+      // Mostrar feedback de éxito después de la animación
+      setTimeout(() => {
+        mostrarFeedback('🚶 ¡Mascota paseada! +15 Felicidad, +10 Hambre, -10 Limpieza');
+      }, 2500);
+      
+      // Actualizar estadísticas inmediatamente
+      actualizarEstadisticas(mascota);
+      
+    } else {
+      const error = await response.json();
+      mostrarFeedback(`❌ Error: ${error.error}`);
+    }
+    
+  } catch (error) {
+    console.error('Error al pasear:', error);
+    mostrarFeedback('❌ Error de conexión');
+  } finally {
+    // Restaurar botón
+    this.style.opacity = '1';
+    this.style.pointerEvents = 'auto';
+  }
+};
+
+// Función para crear animación de huellas y paseo
+function crearAnimacionHuellas() {
+  const mascotaAvatar = document.querySelector('.mascota-avatar');
+  if (!mascotaAvatar) return;
+  
+  const mascotaRect = mascotaAvatar.getBoundingClientRect();
+  
+  // Crear contenedor de animación
+  const walkAnimation = document.createElement('div');
+  walkAnimation.className = 'walk-animation';
+  
+  // Crear 5 huellas
+  for (let i = 0; i < 5; i++) {
+    const footprint = document.createElement('div');
+    footprint.className = 'footprint';
+    footprint.textContent = '🐾';
+    walkAnimation.appendChild(footprint);
+  }
+  
+  // Posicionar en el centro de la mascota
+  walkAnimation.style.left = `${mascotaRect.left + mascotaRect.width / 2}px`;
+  walkAnimation.style.top = `${mascotaRect.top + mascotaRect.height / 2}px`;
+  
+  // Agregar al DOM
+  document.body.appendChild(walkAnimation);
+  
+  // Remover después de 2.5 segundos
+  setTimeout(() => {
+    walkAnimation.remove();
+  }, 2500);
+}
+
+// Función para animar el paseo de la mascota
+function animarPaseoMascota() {
+  const mascotaAvatar = document.querySelector('.mascota-avatar');
+  if (!mascotaAvatar) return;
+  
+  // Agregar clase para la animación de paseo
+  mascotaAvatar.classList.add('mascota-paseando');
+  
+  // Después de 2.5 segundos (duración de la animación), agregar efecto de suciedad PERMANENTE
+  setTimeout(() => {
+    mascotaAvatar.classList.remove('mascota-paseando');
+    mascotaAvatar.classList.add('mascota-sucia');
+    
+    // Agregar moscas alrededor de la mascota sucia
+    const moscasContainer = document.createElement('div');
+    moscasContainer.className = 'moscas';
+    
+    // Crear 4 moscas
+    for (let i = 0; i < 4; i++) {
+      const mosca = document.createElement('div');
+      mosca.className = 'mosca';
+      mosca.textContent = '🪰';
+      moscasContainer.appendChild(mosca);
+    }
+    
+    mascotaAvatar.appendChild(moscasContainer);
+    
+    // La suciedad permanece hasta que se bañe (NO se remueve automáticamente)
+  }, 2500);
+}
+
+// Funcionalidad de curar enfermedades
+document.getElementById('curarBtn').onclick = async function() {
+  const token = localStorage.getItem('gameToken');
+  const mascotaId = localStorage.getItem('mascotaSeleccionada');
+  
+  console.log('Token:', token);
+  console.log('Mascota ID:', mascotaId);
+  
+  if (!token || !mascotaId) {
+    mostrarFeedback('❌ Error: No se encontró la mascota');
+    console.error('Token o mascotaId faltante:', { token: !!token, mascotaId: !!mascotaId });
+    return;
+  }
+  
+  // Deshabilitar botón durante la acción
+  this.style.opacity = '0.5';
+  this.style.pointerEvents = 'none';
+  
+  try {
+    // Crear animación de curación
+    crearAnimacionCuracion();
+    
+    // Llamar al endpoint de curar
+    const response = await fetch(`/api/pets/${mascotaId}/cure`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      }
+    });
+    
+    if (response.ok) {
+      const mascota = await response.json();
+      
+      // Mostrar feedback de éxito después de la animación
+      setTimeout(() => {
+        mostrarFeedback('💊 ¡Mascota curada! +20 Vida, todas las enfermedades eliminadas');
+      }, 1500);
+      
+      // Actualizar estadísticas inmediatamente
+      actualizarEstadisticas(mascota);
+      
+    } else {
+      const error = await response.json();
+      mostrarFeedback(`❌ Error: ${error.error}`);
+    }
+    
+  } catch (error) {
+    console.error('Error al curar:', error);
+    mostrarFeedback('❌ Error de conexión');
+  } finally {
+    // Restaurar botón
+    this.style.opacity = '1';
+    this.style.pointerEvents = 'auto';
+  }
+};
+
+// Función para crear animación de curación
+function crearAnimacionCuracion() {
+  const mascotaAvatar = document.querySelector('.mascota-avatar');
+  if (!mascotaAvatar) return;
+  
+  const mascotaRect = mascotaAvatar.getBoundingClientRect();
+  
+  // Crear contenedor de animación
+  const cureAnimation = document.createElement('div');
+  cureAnimation.className = 'cure-animation';
+  
+  // Crear 8 partículas de curación
+  for (let i = 0; i < 8; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'heal-particle';
+    particle.textContent = '✨';
+    cureAnimation.appendChild(particle);
+  }
+  
+  // Posicionar en el centro de la mascota
+  cureAnimation.style.left = `${mascotaRect.left + mascotaRect.width / 2}px`;
+  cureAnimation.style.top = `${mascotaRect.top + mascotaRect.height / 2}px`;
+  
+  // Agregar al DOM
+  document.body.appendChild(cureAnimation);
+  
+  // Remover después de 2.5 segundos
+  setTimeout(() => {
+    cureAnimation.remove();
+  }, 2500);
+}
+
+document.getElementById('logoutBtn').onclick = function() {
+  localStorage.clear();
+  window.location.href = 'index.html';
+};
+  </script>
+  </body>
+</html> 

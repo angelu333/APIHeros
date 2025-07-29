@@ -31,7 +31,7 @@ function randomIllnessEvent(pet) {
 
 function degradePetStats(pet) {
     // Definir tasas de degradación por hora
-    const HUNGER_INCREASE = 10; // hambre sube 10 por hora (más hambre)
+    const HUNGER_INCREASE = 60; // hambre sube 60 por hora (más hambre) - 6x más rápido
     const CLEANLINESS_DECAY = 8; // limpieza baja 8 por hora
     const HAPPINESS_DECAY = 5; // felicidad baja 5 por hora
 
@@ -151,8 +151,8 @@ async function feedPet(id, comida) {
     const amount = FOOD_VALUES[comida.toLowerCase()];
     pet.hambre = Math.max(0, pet.hambre - amount); // alimentar baja el hambre
     pet.felicidad = Math.min(100, pet.felicidad + 5);
-    // Si se pasa de alimentar (hambre < 0), puede enfermarse de empacho
-    if (pet.hambre === 0 && !pet.enfermedades.some(e => e.nombre === 'Empacho')) {
+    // Si se pasa de alimentar (hambre muy bajo), puede enfermarse de empacho
+    if (pet.hambre <= 5 && !pet.enfermedades.some(e => e.nombre === 'Empacho')) {
         pet.enfermedades.push({ nombre: 'Empacho', daño: 12 });
     }
     pet.ultimaActualizacion = new Date().toISOString();

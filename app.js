@@ -41,6 +41,7 @@ const swaggerOptions = {
 const swaggerSpec = swaggerJSDoc(swaggerOptions);
 
 app.use(express.json());
+app.use(express.static('public')); // Servir archivos estáticos del juego
 app.use('/api', userController); // Registrar primero para que salga arriba
 app.use('/api', heroController);
 app.use('/api', petController);

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeroPet Legends - Menú</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="main-bg"></div>
+    <div class="container">
+        <div class="branding">
+            <div class="logo-icons">
+                <span class="hero-icon"><i class="fas fa-user-shield"></i></span>
+                <span class="pet-icon"><i class="fas fa-paw"></i></span>
+            </div>
+            <h1 class="game-title">HeroPet <span>Legends</span></h1>
+            <p class="subtitle">¡Bienvenido, leyenda! ¿Qué quieres hacer?</p>
+        </div>
+        <div class="game-menu">
+            <button class="main-btn big-btn" id="crearHeroeBtn">
+                <i class="fas fa-user-plus"></i> Crear un héroe
+            </button>
+            <button class="main-btn big-btn" id="elegirHeroeBtn">
+                <i class="fas fa-users"></i> Elegir un héroe predefinido
+            </button>
+            <button id="btnCrearMascota" class="main-btn">Crear una mascota</button>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const crearHeroeBtn = document.getElementById('crearHeroeBtn');
+        if (crearHeroeBtn) {
+            crearHeroeBtn.onclick = function() {
+                window.location.href = 'crearHeroe.html';
+            };
+        }
+        const elegirHeroeBtn = document.getElementById('elegirHeroeBtn');
+        if (elegirHeroeBtn) {
+            elegirHeroeBtn.onclick = function() {
+                window.location.href = 'elegir.html';
+            };
+        }
+    });
+    </script>
+    <script>
+// Comprobación de flujo de usuario
+const token = localStorage.getItem('gameToken');
+const heroe = localStorage.getItem('heroeSeleccionado');
+const mascota = localStorage.getItem('mascotaSeleccionada');
+
+if (!token) {
+  window.location.href = 'index.html';
+} else if (!heroe) {
+  window.location.href = 'elegir.html';
+} else if (!mascota) {
+  window.location.href = 'elegirMascota.html';
+}
+// Si tiene todo, se queda en juego.html
+</script>
+    <script src="juego.js"></script>
+    <script>
+document.getElementById('btnCrearMascota').onclick = function() {
+  window.location.href = 'crearMascota.html';
+};
+</script>
+</body>
+</html> 

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elegir Héroe - HeroPet Legends</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="main-bg"></div>
+    <div class="container elegir-container">
+        <div class="branding">
+            <h1 class="game-title">HeroPet <span>Legends</span></h1>
+            <p class="subtitle">¡Bienvenido, leyenda! ¿Qué quieres hacer?</p>
+        </div>
+        <div class="main-menu" id="heroMainMenu" style="display:flex; flex-direction:row; justify-content:center; gap:2rem; margin-bottom:2.5rem;">
+            <button class="main-btn big-btn" id="btnCrearHeroe"><i class="fas fa-user-plus"></i> Crear un héroe</button>
+            <button class="main-btn big-btn" id="btnElegirPredefinido"><i class="fas fa-users"></i> Elegir un héroe predefinido</button>
+        </div>
+        <div id="predefinidoSection" style="display:none;">
+            <div class="selector-flex" style="justify-content: center;">
+                <div class="selector-block">
+                    <h2>Héroes predefinidos</h2>
+                    <div class="avatar-preview" id="heroAvatarPreview"></div>
+                    <div class="carousel" id="heroesCarousel"></div>
+                </div>
+            </div>
+            <button class="main-btn big-btn" id="confirmarSeleccion">¡Confirmar selección!</button>
+        </div>
+    </div>
+    <script>
+const token = localStorage.getItem('gameToken');
+const heroe = localStorage.getItem('heroeSeleccionado');
+const mascota = localStorage.getItem('mascotaSeleccionada');
+function isValid(val) {
+  return val && val !== 'null' && val !== 'undefined' && val !== '';
+}
+if (!isValid(token)) {
+  window.location.href = 'index.html';
+} else if (isValid(heroe) && isValid(mascota)) {
+  window.location.href = 'home.html';
+} else if (isValid(heroe) && !isValid(mascota)) {
+  window.location.href = 'elegirMascota.html';
+}
+// Si no hay héroe, se queda en elegir.html
+
+// Mostrar opciones
+const btnCrearHeroe = document.getElementById('btnCrearHeroe');
+const btnElegirPredefinido = document.getElementById('btnElegirPredefinido');
+const predefinidoSection = document.getElementById('predefinidoSection');
+btnCrearHeroe.onclick = () => {
+  window.location.href = 'crearHeroe.html';
+};
+btnElegirPredefinido.onclick = () => {
+  predefinidoSection.style.display = 'block';
+  document.getElementById('heroMainMenu').style.display = 'none';
+};
+</script>
+    <script src="elegir.js"></script>
+</body>
+</html> 

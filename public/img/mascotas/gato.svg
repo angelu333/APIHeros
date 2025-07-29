@@ -1,0 +1,35 @@
+<svg width="180" height="160" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cuerpo -->
+  <ellipse cx="90" cy="115" rx="48" ry="32" fill="#D1D5DB" stroke="#888" stroke-width="4"/>
+  <!-- Cola mejor alineada -->
+  <path d="M125 135 Q155 120 120 110 Q145 140 110 120" stroke="#888" stroke-width="6" fill="none"/>
+  <!-- Cabeza -->
+  <ellipse cx="90" cy="70" rx="36" ry="30" fill="#D1D5DB" stroke="#888" stroke-width="4"/>
+  <!-- Orejas simétricas y bien alineadas -->
+  <polygon points="68,52 78,18 90,55" fill="#D1D5DB" stroke="#888" stroke-width="4"/>
+  <polygon points="112,52 124,18 90,55" fill="#D1D5DB" stroke="#888" stroke-width="4"/>
+  <!-- Mejillas -->
+  <ellipse cx="75" cy="90" rx="6" ry="4" fill="#F99"/>
+  <ellipse cx="105" cy="90" rx="6" ry="4" fill="#F99"/>
+  <!-- Hocico pequeño -->
+  <ellipse cx="90" cy="95" rx="10" ry="7" fill="#fff" stroke="#888" stroke-width="2"/>
+  <!-- Nariz -->
+  <ellipse cx="90" cy="98" rx="2.5" ry="1.5" fill="#E55"/>
+  <!-- Ojos grandes -->
+  <ellipse class="ojo ojo-izquierdo" cx="80" cy="77" rx="7" ry="9" fill="#fff" stroke="#333" stroke-width="2"/>
+  <ellipse class="ojo ojo-derecho" cx="100" cy="77" rx="7" ry="9" fill="#fff" stroke="#333" stroke-width="2"/>
+  <ellipse class="pupila pupila-izquierda" cx="80" cy="79" rx="2.5" ry="3.5" fill="#333"/>
+  <ellipse class="pupila pupila-derecha" cx="100" cy="79" rx="2.5" ry="3.5" fill="#333"/>
+  <!-- Cejas -->
+  <path d="M75 68 Q80 72 85 68" stroke="#888" stroke-width="2" fill="none"/>
+  <path d="M95 68 Q100 72 105 68" stroke="#888" stroke-width="2" fill="none"/>
+  <!-- Boca sonriente -->
+  <path d="M87 104 Q90 108 93 104" stroke="#E55" stroke-width="2" fill="none"/>
+  <!-- Bigotes finos -->
+  <line x1="85" y1="98" x2="60" y2="100" stroke="#888" stroke-width="1.5"/>
+  <line x1="85" y1="101" x2="60" y2="110" stroke="#888" stroke-width="1.5"/>
+  <line x1="85" y1="95" x2="60" y2="90" stroke="#888" stroke-width="1.5"/>
+  <line x1="95" y1="98" x2="120" y2="100" stroke="#888" stroke-width="1.5"/>
+  <line x1="95" y1="101" x2="120" y2="110" stroke="#888" stroke-width="1.5"/>
+  <line x1="95" y1="95" x2="120" y2="90" stroke="#888" stroke-width="1.5"/>
+</svg> 

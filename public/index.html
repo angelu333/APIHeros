@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeroPet Legends</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="main-bg"></div>
+    <div class="container">
+        <div class="branding">
+            <div class="logo-icons">
+                <span class="hero-icon"><i class="fas fa-user-shield"></i></span>
+                <span class="pet-icon"><i class="fas fa-paw"></i></span>
+            </div>
+            <h1 class="game-title">HeroPet <span>Legends</span></h1>
+            <p class="subtitle">¡Une fuerzas con tu mascota y conviértete en leyenda!</p>
+        </div>
+        <div class="main-menu" id="mainMenu">
+            <button class="main-btn" id="showLogin">Iniciar sesión</button>
+            <button class="main-btn" id="showRegister">Registrarse</button>
+        </div>
+        <div class="form-overlay hidden" id="formOverlay"></div>
+        <div class="form-container hidden" id="loginForm">
+            <button class="close-btn" id="closeLogin" title="Cerrar"><i class="fas fa-times"></i></button>
+            <h2>Iniciar sesión</h2>
+            <form>
+                <div class="input-group">
+                    <input type="email" id="loginEmail" placeholder="Correo electrónico" required autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="loginPassword" placeholder="Contraseña" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="main-btn">Entrar</button>
+            </form>
+            <p class="form-msg" id="loginMsg"></p>
+            <p>¿No tienes cuenta? <a href="#" id="toRegister">Regístrate aquí</a></p>
+        </div>
+        <div class="form-container hidden" id="registerForm">
+            <button class="close-btn" id="closeRegister" title="Cerrar"><i class="fas fa-times"></i></button>
+            <h2>Registro</h2>
+            <form>
+                <div class="input-group">
+                    <input type="text" id="registerName" placeholder="Nombre" required autocomplete="name">
+                </div>
+                <div class="input-group">
+                    <input type="email" id="registerEmail" placeholder="Correo electrónico" required autocomplete="username">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="registerPassword" placeholder="Contraseña" required autocomplete="new-password">
+                </div>
+                <button type="submit" class="main-btn">Registrar</button>
+            </form>
+            <p class="form-msg" id="registerMsg"></p>
+            <p>¿Ya tienes cuenta? <a href="#" id="toLogin">Inicia sesión</a></p>
+        </div>
+        <div class="hero-pet-icons">
+            <i class="fas fa-dog"></i>
+            <i class="fas fa-cat"></i>
+            <i class="fas fa-dragon"></i>
+            <i class="fas fa-crow"></i>
+            <i class="fas fa-shield-alt"></i>
+            <i class="fas fa-bolt"></i>
+            <i class="fas fa-heart"></i>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html> 

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Héroe - HeroPet Legends</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="main-bg"></div>
+    <div class="container crearheroe-container">
+        <div class="branding">
+            <h1 class="game-title">Crea tu <span>Héroe</span></h1>
+            <p class="subtitle">¡Personaliza tu héroe legendario y comienza la aventura!</p>
+        </div>
+        <div class="crear-flex">
+            <div class="editor-block">
+                <div class="avatar-preview" id="heroEditorAvatar"></div>
+            </div>
+            <form class="editor-form" id="heroForm">
+                <div class="input-group">
+                    <label>Nombre</label>
+                    <input type="text" id="heroName" required maxlength="18">
+                </div>
+                <div class="input-group">
+                    <label>Alias</label>
+                    <input type="text" id="heroAlias" required maxlength="18">
+                </div>
+                <div class="input-group">
+                    <label>Ciudad</label>
+                    <input type="text" id="heroCity" required maxlength="18">
+                </div>
+                <div class="input-group">
+                    <label>Equipo</label>
+                    <input type="text" id="heroTeam" required maxlength="18">
+                </div>
+                <div class="input-group">
+                    <label>Color de traje</label>
+                    <input type="color" id="heroSuitColor" value="#1976d2">
+                </div>
+                <div class="input-group">
+                    <label>Color de capa</label>
+                    <input type="color" id="heroCapeColor" value="#e53935">
+                </div>
+                <div class="input-group">
+                    <label>Accesorios</label>
+                    <select id="heroAccessory">
+                        <option value="">Ninguno</option>
+                        <option value="capa">Capa</option>
+                        <option value="antifaz">Antifaz</option>
+                        <option value="casco">Casco</option>
+                        <option value="bufanda">Bufanda</option>
+                        <option value="varita">Varita</option>
+                        <option value="estrella">Estrella</option>
+                        <option value="hoja">Hoja</option>
+                    </select>
+                </div>
+                <button class="main-btn big-btn" type="submit">¡Crear héroe!</button>
+                <p class="form-msg" id="heroFormMsg"></p>
+            </form>
+        </div>
+    </div>
+    <script src="crearHeroe.js"></script>
+</body>
+</html> 

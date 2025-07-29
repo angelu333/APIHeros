@@ -128,6 +128,41 @@ router.delete('/pets/:id', async (req, res) => {
 
 /**
  * @swagger
+ * /api/pets/{id}:
+ *   get:
+ *     summary: Obtiene una mascota específica por ID
+ *     tags: [Mascotas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de la mascota
+ *     responses:
+ *       200:
+ *         description: Mascota encontrada
+ *       404:
+ *         description: Mascota no encontrada
+ */
+router.get('/pets/:id', async (req, res) => {
+    try {
+        const pet = await Pet.findById(req.params.id);
+        if (!pet) {
+            return res.status(404).json({ error: 'Mascota no encontrada' });
+        }
+        // Verificar que la mascota pertenece al usuario
+        if (pet.owner.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ error: 'No tienes permisos para ver esta mascota' });
+        }
+        res.json(pet);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/**
+ * @swagger
  * /api/pets/{id}/status:
  *   get:
  *     summary: Consulta el estado dinámico de la mascota (solo si está adoptada)

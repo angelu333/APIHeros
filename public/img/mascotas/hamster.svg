@@ -1,0 +1,29 @@
+<svg width="180" height="160" viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Cuerpo -->
+  <ellipse cx="90" cy="110" rx="50" ry="35" fill="#F9D29D" stroke="#B97A56" stroke-width="4"/>
+  <!-- Cabeza -->
+  <ellipse cx="90" cy="70" rx="40" ry="34" fill="#F9D29D" stroke="#B97A56" stroke-width="4"/>
+  <!-- Orejas redondas -->
+  <ellipse cx="60" cy="38" rx="12" ry="12" fill="#fff" stroke="#B97A56" stroke-width="3"/>
+  <ellipse cx="120" cy="38" rx="12" ry="12" fill="#fff" stroke="#B97A56" stroke-width="3"/>
+  <!-- Mejillas -->
+  <ellipse cx="70" cy="90" rx="8" ry="6" fill="#F99"/>
+  <ellipse cx="110" cy="90" rx="8" ry="6" fill="#F99"/>
+  <!-- Hocico -->
+  <ellipse cx="90" cy="95" rx="14" ry="10" fill="#fff" stroke="#B97A56" stroke-width="2"/>
+  <!-- Dientes -->
+  <rect x="85" y="102" width="10" height="8" rx="2" fill="#fff" stroke="#B97A56" stroke-width="1"/>
+  <line x1="90" y1="102" x2="90" y2="110" stroke="#B97A56" stroke-width="1"/>
+  <!-- Nariz -->
+  <ellipse cx="90" cy="98" rx="3" ry="2" fill="#E55"/>
+  <!-- Ojos grandes -->
+  <ellipse class="ojo ojo-izquierdo" cx="78" cy="75" rx="6" ry="8" fill="#fff" stroke="#333" stroke-width="2"/>
+  <ellipse class="ojo ojo-derecho" cx="102" cy="75" rx="6" ry="8" fill="#fff" stroke="#333" stroke-width="2"/>
+  <ellipse class="pupila pupila-izquierda" cx="78" cy="77" rx="2.5" ry="3" fill="#333"/>
+  <ellipse class="pupila pupila-derecha" cx="102" cy="77" rx="2.5" ry="3" fill="#333"/>
+  <!-- Cejas -->
+  <path d="M72 65 Q78 70 84 65" stroke="#B97A56" stroke-width="2" fill="none"/>
+  <path d="M96 65 Q102 70 108 65" stroke="#B97A56" stroke-width="2" fill="none"/>
+  <!-- Boca sonriente -->
+  <path d="M87 105 Q90 110 93 105" stroke="#E55" stroke-width="2" fill="none"/>
+</svg> 

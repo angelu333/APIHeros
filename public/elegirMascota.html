@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elige tu Mascota | HeroPet Legends</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="mascota-container">
+    <h1 class="main-title">Elige o crea tu <span class="resaltado">Mascota</span></h1>
+    <p class="sub-title">Selecciona una mascota predefinida o crea una nueva para acompañar a tu héroe.</p>
+    <div class="mascota-opciones">
+      <button class="main-btn" onclick="window.location.href='crearMascota.html'">Crear una mascota</button>
+    </div>
+    <h2 class="carrusel-title">Mascotas predefinidas</h2>
+    <div class="carrusel-mascotas">
+      <button class="carrusel-arrow" id="carruselPrev">&#8592;</button>
+      <div class="carrusel-viewport" id="carruselViewport">
+        <!-- Las mascotas se insertan aquí por JS -->
+      </div>
+      <button class="carrusel-arrow" id="carruselNext">&#8594;</button>
+    </div>
+    <div class="carrusel-indicadores" id="carruselIndicadores"></div>
+  </div>
+  <script src="elegirMascota.js"></script>
+</body>
+</html> 

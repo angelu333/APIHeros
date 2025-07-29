@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Mascota | HeroPet Legends</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="crear-mascota-container">
+    <h1>¡Crea tu Mascota!</h1>
+    <div id="avatarMascotaPreview" class="mascota-avatar-preview"></div>
+    <div id="mascotaDatosPreview" style="margin-top:10px; color:#fff; text-align:center;"></div>
+    <form id="formCrearMascota">
+      <label>Tipo de animal:
+        <select id="tipoMascota" name="type">
+          <option value="perro">Perro</option>
+          <option value="gato">Gato</option>
+          <option value="conejo">Conejo</option>
+          <option value="caballo">Caballo</option>
+        </select>
+      </label>
+      <label>Nombre:
+        <input type="text" id="nombreMascota" name="name" required maxlength="20">
+      </label>
+      <label>Superpoder:
+        <input type="text" id="superPoderMascota" name="superPower" required maxlength="30">
+      </label>
+      <button type="submit" class="main-btn">¡Crear Mascota!</button>
+    </form>
+  </div>
+  <script src="crearMascota.js"></script>
+</body>
+</html> 
