@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catch the Treat | HeroPet Legends</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    .game-container {
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #87CEEB 0%, #98FB98 100%);
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+    }
+    
+    .game-ui {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      display: flex;
+      gap: 20px;
+    }
+    
+    .ui-panel {
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 15px;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    
+    .lives {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+    
+    .life {
+      font-size: 1.5rem;
+      animation: pulse 1s infinite;
+    }
+    
+    .life.lost {
+      opacity: 0.3;
+      animation: none;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0.3; }
+    }
+    
+    .player {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 100px;
+      z-index: 100;
+      transition: left 0.1s ease;
+    }
+    
+    .player svg {
+      width: 100px;
+      height: 100px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    }
+    
+    .treat {
+      position: absolute;
+      width: 35px;
+      height: 35px;
+      background: #FFD700;
+      border-radius: 50%;
+      border: 3px solid #FFA500;
+      z-index: 50;
+      animation: fall 1.5s linear;
+    }
+    
+    .treat::before {
+      content: '🍪';
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      font-size: 50px;
+    }
+    
+    .treat-special {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: #FF69B4;
+      border-radius: 50%;
+      border: 4px solid #FF1493;
+      z-index: 50;
+      animation: fall 1.2s linear;
+    }
+    
+    .treat-special::before {
+      content: '🍰';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      font-size: 60px;
+    }
+    
+    .bad-item {
+      position: absolute;
+      width: 35px;
+      height: 35px;
+      background: #FF4444;
+      border-radius: 50%;
+      border: 3px solid #CC0000;
+      z-index: 50;
+      animation: fall 1.8s linear;
+    }
+    
+    .bad-item::before {
+      content: '💩';
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      font-size: 50px;
+    }
+    
+    .bomb {
+      position: absolute;
+      width: 35px;
+      height: 35px;
+      background: #333;
+      border-radius: 50%;
+      border: 3px solid #000;
+      z-index: 50;
+      animation: fall 1.3s linear;
+    }
+    
+    .bomb::before {
+      content: '💣';
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      font-size: 50px;
+    }
+    
+    .coin {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: #FFD700;
+      border-radius: 50%;
+      border: 2px solid #FFA500;
+      z-index: 60;
+      animation: coinFloat 1s ease-out;
+    }
+    
+    .coin::before {
+      content: '🪙';
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      font-size: 36px;
+    }
+    
+    @keyframes fall {
+      from {
+        top: -50px;
+      }
+      to {
+        top: 100vh;
+      }
+    }
+    
+    @keyframes coinFloat {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-50px) scale(1.5);
+      }
+    }
+    
+    .game-over {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      z-index: 2000;
+      display: none;
+    }
+    
+    .game-over h2 {
+      color: #FFD700;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+    
+    .game-over p {
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+    
+    .game-over button {
+      background: linear-gradient(135deg, #4CAF50, #45a049);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 0 10px;
+      transition: all 0.3s ease;
+    }
+    
+    .game-over button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+    
+    .cloud {
+      position: absolute;
+      background: white;
+      border-radius: 50px;
+      opacity: 0.8;
+      animation: float 20s linear infinite;
+    }
+    
+    .cloud::before {
+      content: '☁️';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      font-size: 60px;
+    }
+    
+    @keyframes float {
+      from {
+        left: -100px;
+      }
+      to {
+        left: 100vw;
+      }
+    }
+    
+    .score-popup {
+      position: absolute;
+      color: #FFD700;
+      font-weight: bold;
+      font-size: 1.5rem;
+      z-index: 150;
+      animation: scorePopup 1s ease-out;
+      pointer-events: none;
+    }
+    
+    @keyframes scorePopup {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1.5) translateY(-30px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container" id="gameContainer">
+    <!-- UI del juego -->
+    <div class="game-ui">
+      <div class="ui-panel">
+        🍪 Puntos: <span id="score">0</span>
+      </div>
+      <div class="ui-panel">
+        🕐 Tiempo: <span id="time">60</span>s
+      </div>
+      <div class="ui-panel">
+        🪙 Monedas: <span id="coins">0</span>
+      </div>
+      <div class="ui-panel">
+        <div class="lives">
+          ❤️ Vidas: 
+          <span class="life" id="life1">❤️</span>
+          <span class="life" id="life2">❤️</span>
+          <span class="life" id="life3">❤️</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Jugador (mascota) -->
+    <div class="player" id="player">
+      <!-- SVG de la mascota se inyectará aquí -->
+    </div>
+    
+    <!-- Nubes decorativas -->
+    <div class="cloud" style="top: 50px; width: 80px; height: 40px; animation-delay: 0s;"></div>
+    <div class="cloud" style="top: 120px; width: 60px; height: 30px; animation-delay: 5s;"></div>
+    <div class="cloud" style="top: 200px; width: 100px; height: 50px; animation-delay: 10s;"></div>
+    
+    <!-- Pantalla de Game Over -->
+    <div class="game-over" id="gameOver">
+      <h2>🎮 ¡Juego Terminado!</h2>
+      <p>Puntuación: <span id="finalScore">0</span></p>
+      <p>Monedas ganadas: <span id="finalCoins">0</span></p>
+      <button onclick="reiniciarJuego()">🔄 Jugar de nuevo</button>
+      <button onclick="volverMenu()">🏠 Volver al menú</button>
+    </div>
+  </div>
+
+  <script>
+    // Variables del juego
+    let score = 0;
+    let timeLeft = 60;
+    let coins = 0;
+    let lives = 3;
+    let gameRunning = true;
+    let playerX = window.innerWidth / 2;
+    let keys = {};
+    let difficulty = 1;
+    let spawnRate = 800; // ms entre spawns
+    
+    // Elementos del DOM
+    const player = document.getElementById('player');
+    const gameContainer = document.getElementById('gameContainer');
+    const gameOver = document.getElementById('gameOver');
+    
+    // Inicializar juego
+    function initGame() {
+      // Cargar mascota del usuario
+      cargarMascotaUsuario();
+      
+      // Event listeners
+      document.addEventListener('keydown', (e) => {
+        keys[e.key] = true;
+      });
+      
+      document.addEventListener('keyup', (e) => {
+        keys[e.key] = false;
+      });
+      
+      // Iniciar loops del juego
+      gameLoop();
+      spawnLoop();
+      timeLoop();
+      difficultyLoop();
+    }
+    
+    // Cargar mascota del usuario
+    function cargarMascotaUsuario() {
+      const mascotaStr = localStorage.getItem('mascotaSeleccionada');
+      if (mascotaStr) {
+        try {
+          let mascota;
+          if (mascotaStr.startsWith('{')) {
+            mascota = JSON.parse(mascotaStr);
+          } else {
+            // Si es solo el ID, usar un SVG por defecto
+            mascota = { name: 'Bolt' };
+          }
+          
+          // SVGs de mascotas predefinidas
+          const MASCOTA_SVGS = {
+            'Bolt': `<svg viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="90" cy="110" rx="55" ry="38" fill="#F9E4B7" stroke="#333" stroke-width="4"/>
+              <ellipse cx="90" cy="70" rx="45" ry="38" fill="#F9E4B7" stroke="#333" stroke-width="4"/>
+              <ellipse cx="60" cy="55" rx="13" ry="16" fill="#B8865B" stroke="#333" stroke-width="3"/>
+              <ellipse cx="120" cy="55" rx="13" ry="16" fill="#B8865B" stroke="#333" stroke-width="3"/>
+              <ellipse cx="90" cy="90" rx="22" ry="16" fill="#fff" stroke="#333" stroke-width="2"/>
+              <ellipse cx="90" cy="95" rx="6" ry="4" fill="#333"/>
+              <ellipse cx="90" cy="105" rx="7" ry="4" fill="#F99"/>
+              <ellipse cx="75" cy="75" rx="7" ry="10" fill="#fff" stroke="#333" stroke-width="2"/>
+              <ellipse cx="105" cy="75" rx="7" ry="10" fill="#fff" stroke="#333" stroke-width="2"/>
+              <ellipse cx="75" cy="77" rx="3" ry="4" fill="#333"/>
+              <ellipse cx="105" cy="77" rx="3" ry="4" fill="#333"/>
+              <path d="M70 65 Q75 70 80 65" stroke="#333" stroke-width="2" fill="none"/>
+              <path d="M100 65 Q105 70 110 65" stroke="#333" stroke-width="2" fill="none"/>
+              <path d="M85 102 Q90 110 95 102" stroke="#e55" stroke-width="2" fill="none"/>
+            </svg>`,
+            'Whiskers': `<svg viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="90" cy="115" rx="48" ry="32" fill="#D1D5DB" stroke="#888" stroke-width="4"/>
+              <ellipse cx="90" cy="70" rx="36" ry="30" fill="#D1D5DB" stroke="#888" stroke-width="4"/>
+              <ellipse cx="75" cy="90" rx="6" ry="4" fill="#F99"/>
+              <ellipse cx="105" cy="90" rx="6" ry="4" fill="#F99"/>
+              <ellipse cx="90" cy="95" rx="10" ry="7" fill="#fff" stroke="#888" stroke-width="2"/>
+              <ellipse cx="90" cy="98" rx="2.5" ry="1.5" fill="#E55"/>
+              <ellipse cx="80" cy="77" rx="7" ry="9" fill="#fff" stroke="#333" stroke-width="2"/>
+              <ellipse cx="100" cy="77" rx="7" ry="9" fill="#fff" stroke="#333" stroke-width="2"/>
+              <ellipse cx="80" cy="79" rx="2.5" ry="3.5" fill="#333"/>
+              <ellipse cx="100" cy="79" rx="2.5" ry="3.5" fill="#333"/>
+            </svg>`
+          };
+          
+          const svgMascota = MASCOTA_SVGS[mascota.name] || MASCOTA_SVGS['Bolt'];
+          player.innerHTML = svgMascota;
+          
+        } catch (error) {
+          console.error('Error cargando mascota:', error);
+          // Usar mascota por defecto
+          player.innerHTML = `<svg viewBox="0 0 180 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="90" cy="110" rx="55" ry="38" fill="#F9E4B7" stroke="#333" stroke-width="4"/>
+            <ellipse cx="90" cy="70" rx="45" ry="38" fill="#F9E4B7" stroke="#333" stroke-width="4"/>
+            <ellipse cx="75" cy="75" rx="7" ry="10" fill="#fff" stroke="#333" stroke-width="2"/>
+            <ellipse cx="105" cy="75" rx="7" ry="10" fill="#fff" stroke="#333" stroke-width="2"/>
+            <ellipse cx="75" cy="77" rx="3" ry="4" fill="#333"/>
+            <ellipse cx="105" cy="77" rx="3" ry="4" fill="#333"/>
+          </svg>`;
+        }
+      }
+    }
+    
+    // Loop principal del juego
+    function gameLoop() {
+      if (!gameRunning) return;
+      
+      // Mover jugador
+      if (keys['ArrowLeft'] || keys['a'] || keys['A']) {
+        playerX = Math.max(40, playerX - 8);
+      }
+      if (keys['ArrowRight'] || keys['d'] || keys['D']) {
+        playerX = Math.min(window.innerWidth - 40, playerX + 8);
+      }
+      
+      player.style.left = playerX + 'px';
+      
+      // Detectar colisiones
+      detectCollisions();
+      
+      requestAnimationFrame(gameLoop);
+    }
+    
+    // Loop de spawn de objetos
+    function spawnLoop() {
+      if (!gameRunning) return;
+      
+      // Spawn múltiple basado en dificultad
+      const spawnCount = Math.floor(Math.random() * difficulty) + 1;
+      
+      for (let i = 0; i < spawnCount; i++) {
+        setTimeout(() => {
+          if (!gameRunning) return;
+          
+          const rand = Math.random();
+          
+          if (rand < 0.4) {
+            spawnTreat(); // Galleta normal
+          } else if (rand < 0.5) {
+            spawnSpecialTreat(); // Galleta especial
+          } else if (rand < 0.7) {
+            spawnBadItem(); // Objeto malo
+          } else if (rand < 0.85) {
+            spawnBomb(); // Bomba
+          }
+          // 15% probabilidad de no spawnear nada
+          
+        }, i * 100); // Pequeño delay entre spawns múltiples
+      }
+      
+      // Tiempo entre spawns (se reduce con la dificultad)
+      const spawnTime = Math.max(200, spawnRate - (difficulty * 50));
+      setTimeout(spawnLoop, spawnTime);
+    }
+    
+    // Loop de dificultad
+    function difficultyLoop() {
+      if (!gameRunning) return;
+      
+      // Aumentar dificultad cada 10 segundos
+      setTimeout(() => {
+        if (gameRunning) {
+          difficulty++;
+          spawnRate = Math.max(300, spawnRate - 50); // Más rápido
+          console.log(`Dificultad aumentada: ${difficulty}`);
+        }
+      }, 10000);
+      
+      setTimeout(difficultyLoop, 10000);
+    }
+    
+    // Loop del tiempo
+    function timeLoop() {
+      if (!gameRunning) return;
+      
+      timeLeft--;
+      document.getElementById('time').textContent = timeLeft;
+      
+      if (timeLeft <= 0) {
+        endGame();
+        return;
+      }
+      
+      setTimeout(timeLoop, 1000);
+    }
+    
+    // Spawn de galleta
+    function spawnTreat() {
+      const treat = document.createElement('div');
+      treat.className = 'treat';
+      treat.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+      gameContainer.appendChild(treat);
+      
+      // Remover después de la animación
+      setTimeout(() => {
+        if (treat.parentNode) {
+          treat.parentNode.removeChild(treat);
+        }
+      }, 1500);
+    }
+    
+    // Spawn de galleta especial
+    function spawnSpecialTreat() {
+      const treat = document.createElement('div');
+      treat.className = 'treat-special';
+      treat.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+      gameContainer.appendChild(treat);
+      
+      // Remover después de la animación
+      setTimeout(() => {
+        if (treat.parentNode) {
+          treat.parentNode.removeChild(treat);
+        }
+      }, 1200);
+    }
+    
+    // Spawn de objeto malo
+    function spawnBadItem() {
+      const badItem = document.createElement('div');
+      badItem.className = 'bad-item';
+      badItem.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+      gameContainer.appendChild(badItem);
+      
+      // Remover después de la animación
+      setTimeout(() => {
+        if (badItem.parentNode) {
+          badItem.parentNode.removeChild(badItem);
+        }
+      }, 1800);
+    }
+    
+    // Spawn de bomba
+    function spawnBomb() {
+      const bomb = document.createElement('div');
+      bomb.className = 'bomb';
+      bomb.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+      gameContainer.appendChild(bomb);
+      
+      // Remover después de la animación
+      setTimeout(() => {
+        if (bomb.parentNode) {
+          bomb.parentNode.removeChild(bomb);
+        }
+      }, 1300);
+    }
+    
+    // Detectar colisiones
+    function detectCollisions() {
+      const playerRect = player.getBoundingClientRect();
+      const treats = document.querySelectorAll('.treat');
+      const specialTreats = document.querySelectorAll('.treat-special');
+      const badItems = document.querySelectorAll('.bad-item');
+      const bombs = document.querySelectorAll('.bomb');
+      
+      // Colisión con galletas normales
+      treats.forEach(treat => {
+        const treatRect = treat.getBoundingClientRect();
+        if (isColliding(playerRect, treatRect)) {
+          // Ganar puntos y monedas
+          const points = 1 + Math.floor(Math.random() * 3); // 1-3 puntos
+          const coinGain = 1 + Math.floor(Math.random() * 2); // 1-2 monedas
+          
+          score += points;
+          coins += coinGain;
+          
+          // Actualizar UI
+          document.getElementById('score').textContent = score;
+          document.getElementById('coins').textContent = coins;
+          
+          // Crear popup de puntuación
+          createScorePopup(treatRect.left, treatRect.top, `+${points}`);
+          
+          // Crear moneda flotante
+          createCoin(treatRect.left, treatRect.top);
+          
+          // Remover galleta
+          treat.remove();
+        }
+      });
+      
+      // Colisión con galletas especiales
+      specialTreats.forEach(treat => {
+        const treatRect = treat.getBoundingClientRect();
+        if (isColliding(playerRect, treatRect)) {
+          // Ganar más puntos y monedas
+          const points = 5 + Math.floor(Math.random() * 5); // 5-10 puntos
+          const coinGain = 3 + Math.floor(Math.random() * 3); // 3-6 monedas
+          
+          score += points;
+          coins += coinGain;
+          
+          // Actualizar UI
+          document.getElementById('score').textContent = score;
+          document.getElementById('coins').textContent = coins;
+          
+          // Crear popup de puntuación
+          createScorePopup(treatRect.left, treatRect.top, `+${points}`, '#FF69B4');
+          
+          // Crear moneda flotante
+          createCoin(treatRect.left, treatRect.top);
+          
+          // Remover galleta especial
+          treat.remove();
+        }
+      });
+      
+      // Colisión con objetos malos
+      badItems.forEach(badItem => {
+        const badItemRect = badItem.getBoundingClientRect();
+        if (isColliding(playerRect, badItemRect)) {
+          // Perder vida
+          loseLife();
+          
+          // Crear popup de puntuación
+          createScorePopup(badItemRect.left, badItemRect.top, '💔', '#FF4444');
+          
+          // Remover objeto malo
+          badItem.remove();
+        }
+      });
+      
+      // Colisión con bombas
+      bombs.forEach(bomb => {
+        const bombRect = bomb.getBoundingClientRect();
+        if (isColliding(playerRect, bombRect)) {
+          // Perder 2 vidas
+          loseLife();
+          loseLife();
+          
+          // Crear popup de puntuación
+          createScorePopup(bombRect.left, bombRect.top, '💥💔💔', '#FF0000');
+          
+          // Remover bomba
+          bomb.remove();
+        }
+      });
+    }
+    
+    // Perder vida
+    function loseLife() {
+      lives--;
+      
+      // Actualizar UI de vidas
+      const lifeElements = ['life1', 'life2', 'life3'];
+      if (lives >= 0 && lives < 3) {
+        document.getElementById(lifeElements[lives]).classList.add('lost');
+      }
+      
+      // Efecto de parpadeo en el jugador
+      player.style.animation = 'none';
+      setTimeout(() => {
+        player.style.animation = 'blink 0.5s ease-in-out';
+      }, 10);
+      
+      // Verificar si se acabaron las vidas
+      if (lives <= 0) {
+        endGame();
+      }
+    }
+    
+    // Verificar colisión entre dos rectángulos
+    function isColliding(rect1, rect2) {
+      return rect1.left < rect2.right &&
+             rect1.right > rect2.left &&
+             rect1.top < rect2.bottom &&
+             rect1.bottom > rect2.top;
+    }
+    
+    // Crear popup de puntuación
+    function createScorePopup(x, y, text, color = '#FFD700') {
+      const popup = document.createElement('div');
+      popup.className = 'score-popup';
+      popup.textContent = text;
+      popup.style.color = color;
+      popup.style.left = x + 'px';
+      popup.style.top = y + 'px';
+      gameContainer.appendChild(popup);
+      
+      setTimeout(() => {
+        if (popup.parentNode) {
+          popup.parentNode.removeChild(popup);
+        }
+      }, 1000);
+    }
+    
+    // Crear moneda flotante
+    function createCoin(x, y) {
+      const coin = document.createElement('div');
+      coin.className = 'coin';
+      coin.style.left = x + 'px';
+      coin.style.top = y + 'px';
+      gameContainer.appendChild(coin);
+      
+      setTimeout(() => {
+        if (coin.parentNode) {
+          coin.parentNode.removeChild(coin);
+        }
+      }, 1000);
+    }
+    
+    // Terminar juego
+    function endGame() {
+      gameRunning = false;
+      
+      // Guardar monedas ganadas
+      const monedasActuales = parseInt(localStorage.getItem('monedas') || 0);
+      localStorage.setItem('monedas', monedasActuales + coins);
+      
+      // Mostrar pantalla de game over
+      document.getElementById('finalScore').textContent = score;
+      document.getElementById('finalCoins').textContent = coins;
+      
+      // Mostrar razón del fin del juego
+      const gameOverTitle = document.querySelector('.game-over h2');
+      if (lives <= 0) {
+        gameOverTitle.textContent = '💔 ¡Se acabaron las vidas!';
+      } else {
+        gameOverTitle.textContent = '⏰ ¡Se acabó el tiempo!';
+      }
+      
+      gameOver.style.display = 'block';
+    }
+    
+    // Reiniciar juego
+    function reiniciarJuego() {
+      location.reload();
+    }
+    
+    // Volver al menú
+    function volverMenu() {
+      window.location.href = '../minijuegos.html';
+    }
+    
+    // Iniciar juego cuando se carga la página
+    window.addEventListener('load', initGame);
+  </script>
+</body>
+</html> 

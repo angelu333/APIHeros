@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hamburger Hunter - HeroPet Legends</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+            cursor: crosshair;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        }
+
+        .ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            color: white;
+            font-size: 18px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        .score, .coins, .time, .accuracy {
+            margin-bottom: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .pet {
+            display: none; /* Ocultar la mascota completamente */
+        }
+
+        .target {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            animation: float 2s ease-in-out infinite;
+            z-index: 50;
+        }
+
+        .target.hamburger {
+            background: linear-gradient(45deg, #8B4513, #A0522D);
+            border: 3px solid #654321;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .target.hamburger::before {
+            content: '🍔';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .target.bomb {
+            background: linear-gradient(45deg, #2C3E50, #34495E);
+            border: 3px solid #1B2631;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            animation: bombShake 0.5s ease-in-out infinite;
+        }
+
+        .target.bomb::before {
+            content: '💣';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .target.poison {
+            background: linear-gradient(45deg, #8B0000, #DC143C);
+            border: 3px solid #4B0082;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(139, 0, 0, 0.6);
+            animation: poisonPulse 1s ease-in-out infinite;
+        }
+
+        .target.poison::before {
+            content: '☠️';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .target.fake {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            border: 3px solid #FF8C00;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            animation: fakeShimmer 0.8s ease-in-out infinite;
+        }
+
+        .target.fake::before {
+            content: '🍔';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)) brightness(0.7);
+        }
+
+        .target:hover {
+            transform: scale(1.1);
+        }
+
+        .target.hamburger:hover {
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.6);
+        }
+
+        .target.bomb:hover {
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+        }
+
+        .target.poison:hover {
+            box-shadow: 0 6px 20px rgba(139, 0, 0, 0.8);
+        }
+
+        .target.fake:hover {
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .projectile {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, #feca57, #ff9ff3);
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            pointer-events: none;
+            z-index: 40;
+        }
+
+        .projectile::before {
+            content: '🎾';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+        }
+
+        .hit-effect {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            pointer-events: none;
+            z-index: 60;
+            animation: hitEffect 0.5s ease-out forwards;
+        }
+
+        .hit-effect.hamburger-hit::before {
+            content: '🍔';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            animation: hamburgerEat 0.8s ease-out forwards;
+        }
+
+        .hit-effect.bomb-hit::before {
+            content: '💥';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            animation: bombExplode 0.8s ease-out forwards;
+        }
+
+        .hit-effect.poison-hit::before {
+            content: '☠️';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            animation: poisonEffect 0.8s ease-out forwards;
+        }
+
+        .hit-effect.fake-hit::before {
+            content: '💩';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 50px;
+            animation: fakeEffect 0.8s ease-out forwards;
+        }
+
+        .score-popup {
+            position: absolute;
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            pointer-events: none;
+            z-index: 70;
+            animation: scorePopup 1s ease-out forwards;
+        }
+
+        .coin-popup {
+            position: absolute;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 70;
+            animation: coinPopup 1s ease-out forwards;
+        }
+
+        .game-over, .pause-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .game-over-content, .pause-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .game-over h2, .pause-content h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .game-over p, .pause-content p {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .game-over button, .pause-content button {
+            background: linear-gradient(45deg, #feca57, #ff9ff3);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+
+        .game-over button:hover, .pause-content button:hover {
+            transform: scale(1.05);
+        }
+
+        .crosshair {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+        }
+
+        .crosshair::before,
+        .crosshair::after {
+            content: '';
+            position: absolute;
+            background: #fff;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        .crosshair::before {
+            width: 2px;
+            height: 20px;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .crosshair::after {
+            width: 20px;
+            height: 2px;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes bombShake {
+            0%, 100% { transform: translateX(0px); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+
+        @keyframes poisonPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes fakeShimmer {
+            0%, 100% { filter: brightness(0.7) hue-rotate(0deg); }
+            50% { filter: brightness(1) hue-rotate(30deg); }
+        }
+
+        @keyframes hitEffect {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        @keyframes hamburgerEat {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); }
+            50% { transform: translate(-50%, -50%) scale(1.3) rotate(180deg); }
+            100% { transform: translate(-50%, -50%) scale(0) rotate(360deg); }
+        }
+
+        @keyframes bombExplode {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            25% { transform: translate(-50%, -50%) scale(1.5); }
+            50% { transform: translate(-50%, -50%) scale(2); }
+            100% { transform: translate(-50%, -50%) scale(0); }
+        }
+
+        @keyframes poisonEffect {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); }
+            50% { transform: translate(-50%, -50%) scale(1.3) rotate(180deg); }
+            100% { transform: translate(-50%, -50%) scale(0) rotate(360deg); }
+        }
+
+        @keyframes fakeEffect {
+            0% { transform: translate(-50%, -50%) scale(0); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(0); }
+        }
+
+        @keyframes flash {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes scorePopup {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            50% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+            100% { transform: translateY(-40px) scale(1); opacity: 0; }
+        }
+
+        @keyframes coinPopup {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            50% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+            100% { transform: translateY(-40px) scale(1); opacity: 0; }
+        }
+
+        .power-up {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #ff9ff3, #feca57);
+            border-radius: 50%;
+            border: 3px solid #fff;
+            cursor: pointer;
+            animation: powerUpFloat 2s ease-in-out infinite;
+            z-index: 45;
+        }
+
+        .power-up::before {
+            content: '⭐';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+        }
+
+        @keyframes powerUpFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container" id="gameContainer">
+        <div class="ui">
+            <div class="score">Puntuación: <span id="score">0</span></div>
+            <div class="coins">Monedas: <span id="coins">0</span></div>
+            <div class="time">Tiempo: <span id="time">60</span>s</div>
+            <div class="accuracy">Precisión: <span id="accuracy">0</span>%</div>
+        </div>
+
+        <!-- Mascota oculta -->
+        <div class="pet" id="pet" style="display: none;"></div>
+
+        <div class="crosshair" id="crosshair"></div>
+    </div>
+
+    <div class="game-over" id="gameOver">
+        <div class="game-over-content">
+            <h2>🍔 ¡Juego Terminado!</h2>
+            <p>Puntuación final: <span id="finalScore">0</span></p>
+            <p>Monedas ganadas: <span id="finalCoins">0</span></p>
+            <p>Precisión: <span id="finalAccuracy">0</span>%</p>
+            <button onclick="restartGame()">Jugar de nuevo</button>
+            <button onclick="goToMenu()">Volver al menú</button>
+        </div>
+    </div>
+
+    <div class="pause-menu" id="pauseMenu">
+        <div class="pause-content">
+            <h2>⏸️ Juego Pausado</h2>
+            <p>Presiona ESC para continuar</p>
+            <button onclick="resumeGame()">Continuar</button>
+            <button onclick="restartGame()">Reiniciar</button>
+            <button onclick="goToMenu()">Salir al menú</button>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+        let coins = 0;
+        let timeLeft = 60;
+        let gameRunning = true;
+        let gamePaused = false;
+        let targets = [];
+        let projectiles = [];
+        let powerUps = [];
+        let hits = 0;
+        let shots = 0;
+        let difficulty = 1;
+        let powerUpActive = false;
+        let powerUpTimer = 0;
+
+        const gameContainer = document.getElementById('gameContainer');
+        const pet = document.getElementById('pet');
+        const crosshair = document.getElementById('crosshair');
+
+        // Mascota oculta - no se carga ninguna mascota
+        async function cargarMascotaUsuario() {
+            // No hacer nada - la mascota está oculta
+            console.log('Mascota oculta en Pet Target');
+        }
+
+        async function initGame() {
+            await cargarMascotaUsuario();
+            spawnTargets();
+            spawnPowerUps();
+            updateCrosshair();
+            setupPauseControls();
+            gameLoop();
+            timeLoop();
+            difficultyLoop();
+        }
+
+        function spawnTargets() {
+            if (!gameRunning || gamePaused) return;
+            
+            // Spawn múltiples targets para mayor dificultad
+            const targetCount = Math.min(3, Math.floor(difficulty / 2) + 1);
+            
+            for (let i = 0; i < targetCount; i++) {
+                setTimeout(() => {
+                    if (!gameRunning || gamePaused) return;
+                    
+                    const target = document.createElement('div');
+                    
+                    // Decidir el tipo de target (50% hamburguesas, 50% trampas) - MUCHO MÁS DIFÍCIL
+                    const random = Math.random();
+                    let targetType, targetClass;
+                    
+                    if (random < 0.5) {
+                        // 50% hamburguesas
+                        targetType = 'hamburger';
+                        targetClass = 'hamburger';
+                    } else if (random < 0.7) {
+                        // 20% bombas
+                        targetType = 'bomb';
+                        targetClass = 'bomb';
+                    } else if (random < 0.85) {
+                        // 15% veneno
+                        targetType = 'poison';
+                        targetClass = 'poison';
+                    } else {
+                        // 15% hamburguesas falsas
+                        targetType = 'fake';
+                        targetClass = 'fake';
+                    }
+                    
+                    target.className = `target ${targetClass}`;
+                    target.dataset.type = targetType;
+                    
+                    target.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+                    target.style.top = Math.random() * (window.innerHeight - 150) + 100 + 'px';
+                    
+                    target.addEventListener('click', () => hitTarget(target));
+                    gameContainer.appendChild(target);
+                    targets.push(target);
+                    
+                    // Eliminar target después de un tiempo (más rápido)
+                    const targetLifetime = Math.max(800, 2500 - (difficulty * 300));
+                    setTimeout(() => {
+                        if (target.parentNode) {
+                            target.remove();
+                            targets = targets.filter(t => t !== target);
+                        }
+                    }, targetLifetime);
+                }, i * 200);
+            }
+            
+            // Spawn más rápido
+            const spawnTime = Math.max(400, 1500 - (difficulty * 200));
+            setTimeout(spawnTargets, spawnTime);
+        }
+
+        function spawnPowerUps() {
+            if (!gameRunning || gamePaused) return;
+            
+            const powerUp = document.createElement('div');
+            powerUp.className = 'power-up';
+            powerUp.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+            powerUp.style.top = Math.random() * (window.innerHeight - 200) + 100 + 'px';
+            
+            powerUp.addEventListener('click', () => collectPowerUp(powerUp));
+            gameContainer.appendChild(powerUp);
+            powerUps.push(powerUp);
+            
+            // Power-ups desaparecen más rápido
+            setTimeout(() => {
+                if (powerUp.parentNode) {
+                    powerUp.remove();
+                    powerUps = powerUps.filter(p => p !== powerUp);
+                }
+            }, 3000);
+            
+            // Spawn power-ups más frecuentemente
+            setTimeout(spawnPowerUps, Math.random() * 6000 + 3000);
+        }
+
+        function hitTarget(target) {
+            if (!gameRunning || gamePaused) return;
+            
+            shots++;
+            const targetType = target.dataset.type;
+            
+            if (targetType === 'bomb') {
+                // ¡BOOM! Has tocado una bomba - penalización
+                hits--; // Reducir hits por tocar bomba
+                score = Math.max(0, score - 15); // Penalizar 15 puntos
+                coins = Math.max(0, coins - 3); // Perder 3 monedas
+                
+                // Efecto de explosión
+                const hitEffect = document.createElement('div');
+                hitEffect.className = 'hit-effect bomb-hit';
+                hitEffect.style.left = target.style.left;
+                hitEffect.style.top = target.style.top;
+                gameContainer.appendChild(hitEffect);
+                
+                // Popup de penalización
+                const scorePopup = document.createElement('div');
+                scorePopup.className = 'score-popup';
+                scorePopup.textContent = '-15';
+                scorePopup.style.color = '#ff6b6b';
+                scorePopup.style.left = target.style.left;
+                scorePopup.style.top = target.style.top;
+                gameContainer.appendChild(scorePopup);
+                
+                // Popup de monedas perdidas
+                const coinPopup = document.createElement('div');
+                coinPopup.className = 'coin-popup';
+                coinPopup.textContent = '-3 🪙';
+                coinPopup.style.color = '#ff6b6b';
+                coinPopup.style.left = (parseInt(target.style.left) + 30) + 'px';
+                coinPopup.style.top = target.style.top;
+                gameContainer.appendChild(coinPopup);
+                
+                // Efecto de pantalla roja por explosión
+                const explosionEffect = document.createElement('div');
+                explosionEffect.style.position = 'fixed';
+                explosionEffect.style.top = '0';
+                explosionEffect.style.left = '0';
+                explosionEffect.style.width = '100%';
+                explosionEffect.style.height = '100%';
+                explosionEffect.style.backgroundColor = 'rgba(255, 0, 0, 0.4)';
+                explosionEffect.style.zIndex = '9999';
+                explosionEffect.style.pointerEvents = 'none';
+                explosionEffect.style.animation = 'flash 0.4s ease-out';
+                document.body.appendChild(explosionEffect);
+                
+                setTimeout(() => {
+                    explosionEffect.remove();
+                }, 400);
+                
+            } else if (targetType === 'poison') {
+                // ¡VENENO! Penalización severa
+                hits--; // Reducir hits por tocar veneno
+                score = Math.max(0, score - 20); // Penalizar 20 puntos
+                coins = Math.max(0, coins - 4); // Perder 4 monedas
+                
+                // Efecto de veneno
+                const hitEffect = document.createElement('div');
+                hitEffect.className = 'hit-effect poison-hit';
+                hitEffect.style.left = target.style.left;
+                hitEffect.style.top = target.style.top;
+                gameContainer.appendChild(hitEffect);
+                
+                // Popup de penalización
+                const scorePopup = document.createElement('div');
+                scorePopup.className = 'score-popup';
+                scorePopup.textContent = '-20';
+                scorePopup.style.color = '#8B0000';
+                scorePopup.style.left = target.style.left;
+                scorePopup.style.top = target.style.top;
+                gameContainer.appendChild(scorePopup);
+                
+                // Popup de monedas perdidas
+                const coinPopup = document.createElement('div');
+                coinPopup.className = 'coin-popup';
+                coinPopup.textContent = '-4 🪙';
+                coinPopup.style.color = '#8B0000';
+                coinPopup.style.left = (parseInt(target.style.left) + 30) + 'px';
+                coinPopup.style.top = target.style.top;
+                gameContainer.appendChild(coinPopup);
+                
+                // Efecto de pantalla verde por veneno
+                const poisonEffect = document.createElement('div');
+                poisonEffect.style.position = 'fixed';
+                poisonEffect.style.top = '0';
+                poisonEffect.style.left = '0';
+                poisonEffect.style.width = '100%';
+                poisonEffect.style.height = '100%';
+                poisonEffect.style.backgroundColor = 'rgba(139, 0, 0, 0.3)';
+                poisonEffect.style.zIndex = '9999';
+                poisonEffect.style.pointerEvents = 'none';
+                poisonEffect.style.animation = 'flash 0.5s ease-out';
+                document.body.appendChild(poisonEffect);
+                
+                setTimeout(() => {
+                    poisonEffect.remove();
+                }, 500);
+                
+            } else if (targetType === 'fake') {
+                // ¡HAMBURGUESA FALSA! Penalización moderada
+                hits--; // Reducir hits por tocar hamburguesa falsa
+                score = Math.max(0, score - 8); // Penalizar 8 puntos
+                coins = Math.max(0, coins - 1); // Perder 1 moneda
+                
+                // Efecto de hamburguesa falsa
+                const hitEffect = document.createElement('div');
+                hitEffect.className = 'hit-effect fake-hit';
+                hitEffect.style.left = target.style.left;
+                hitEffect.style.top = target.style.top;
+                gameContainer.appendChild(hitEffect);
+                
+                // Popup de penalización
+                const scorePopup = document.createElement('div');
+                scorePopup.className = 'score-popup';
+                scorePopup.textContent = '-8';
+                scorePopup.style.color = '#FF8C00';
+                scorePopup.style.left = target.style.left;
+                scorePopup.style.top = target.style.top;
+                gameContainer.appendChild(scorePopup);
+                
+                // Popup de monedas perdidas
+                const coinPopup = document.createElement('div');
+                coinPopup.className = 'coin-popup';
+                coinPopup.textContent = '-1 🪙';
+                coinPopup.style.color = '#FF8C00';
+                coinPopup.style.left = (parseInt(target.style.left) + 30) + 'px';
+                coinPopup.style.top = target.style.top;
+                gameContainer.appendChild(coinPopup);
+                
+                // Efecto de pantalla naranja por hamburguesa falsa
+                const fakeEffect = document.createElement('div');
+                fakeEffect.style.position = 'fixed';
+                fakeEffect.style.top = '0';
+                fakeEffect.style.left = '0';
+                fakeEffect.style.width = '100%';
+                fakeEffect.style.height = '100%';
+                fakeEffect.style.backgroundColor = 'rgba(255, 140, 0, 0.2)';
+                fakeEffect.style.zIndex = '9999';
+                fakeEffect.style.pointerEvents = 'none';
+                fakeEffect.style.animation = 'flash 0.3s ease-out';
+                document.body.appendChild(fakeEffect);
+                
+                setTimeout(() => {
+                    fakeEffect.remove();
+                }, 300);
+                
+            } else {
+                // ¡Hamburguesa! Puntos normales
+                hits++;
+                
+                // Más puntos por dificultad y precisión
+                const basePoints = powerUpActive ? 20 : 15;
+                const difficultyBonus = Math.floor(difficulty * 2);
+                const points = basePoints + difficultyBonus;
+                const coinReward = powerUpActive ? 4 : 3;
+                
+                score += points;
+                coins += coinReward;
+                
+                // Efecto de hamburguesa comida
+                const hitEffect = document.createElement('div');
+                hitEffect.className = 'hit-effect hamburger-hit';
+                hitEffect.style.left = target.style.left;
+                hitEffect.style.top = target.style.top;
+                gameContainer.appendChild(hitEffect);
+                
+                // Popup de puntuación
+                const scorePopup = document.createElement('div');
+                scorePopup.className = 'score-popup';
+                scorePopup.textContent = `+${points}`;
+                scorePopup.style.left = target.style.left;
+                scorePopup.style.top = target.style.top;
+                gameContainer.appendChild(scorePopup);
+                
+                // Popup de monedas
+                const coinPopup = document.createElement('div');
+                coinPopup.className = 'coin-popup';
+                coinPopup.textContent = `+${coinReward} 🪙`;
+                coinPopup.style.left = (parseInt(target.style.left) + 30) + 'px';
+                coinPopup.style.top = target.style.top;
+                gameContainer.appendChild(coinPopup);
+            }
+            
+            // Eliminar efectos después de la animación
+            setTimeout(() => {
+                const effects = document.querySelectorAll('.hit-effect, .score-popup, .coin-popup');
+                effects.forEach(effect => {
+                    if (effect.parentNode) effect.remove();
+                });
+            }, 1000);
+            
+            target.remove();
+            targets = targets.filter(t => t !== target);
+            
+            updateUI();
+        }
+
+        function collectPowerUp(powerUp) {
+            if (gamePaused) return;
+            
+            powerUpActive = true;
+            powerUpTimer = 8; // 8 segundos de power-up (más corto)
+            
+            // Efecto visual (sin mascota)
+            // pet.style.filter = 'brightness(1.5) drop-shadow(0 0 10px #ff9ff3)';
+            
+            powerUp.remove();
+            powerUps = powerUps.filter(p => p !== powerUp);
+            
+            // Mostrar indicador de power-up
+            const powerUpIndicator = document.createElement('div');
+            powerUpIndicator.style.position = 'absolute';
+            powerUpIndicator.style.top = '100px';
+            powerUpIndicator.style.left = '20px';
+            powerUpIndicator.style.color = '#ff9ff3';
+            powerUpIndicator.style.fontSize = '16px';
+            powerUpIndicator.style.fontWeight = 'bold';
+            powerUpIndicator.textContent = '⭐ POWER-UP ACTIVO! ⭐';
+            powerUpIndicator.id = 'powerUpIndicator';
+            gameContainer.appendChild(powerUpIndicator);
+        }
+
+        function updateCrosshair() {
+            document.addEventListener('mousemove', (e) => {
+                crosshair.style.left = e.clientX - 10 + 'px';
+                crosshair.style.top = e.clientY - 10 + 'px';
+                crosshair.style.display = 'block';
+            });
+        }
+
+        function gameLoop() {
+            if (!gameRunning || gamePaused) return;
+            
+            // Actualizar power-up
+            if (powerUpActive) {
+                powerUpTimer--;
+                if (powerUpTimer <= 0) {
+                    powerUpActive = false;
+                    // pet.style.filter = ''; // Sin mascota
+                    const indicator = document.getElementById('powerUpIndicator');
+                    if (indicator) indicator.remove();
+                }
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        function timeLoop() {
+            if (!gameRunning || gamePaused) return;
+            
+            timeLeft--;
+            updateUI();
+            
+            if (timeLeft <= 0) {
+                endGame();
+                return;
+            }
+            
+            setTimeout(timeLoop, 1000);
+        }
+
+        function difficultyLoop() {
+            if (!gameRunning || gamePaused) return;
+            
+            setTimeout(() => {
+                if (gameRunning && !gamePaused) {
+                    difficulty++;
+                    console.log(`Dificultad aumentada: ${difficulty}`);
+                    
+                    // Efecto visual de dificultad aumentada
+                    const difficultyIndicator = document.createElement('div');
+                    difficultyIndicator.style.position = 'absolute';
+                    difficultyIndicator.style.top = '50%';
+                    difficultyIndicator.style.left = '50%';
+                    difficultyIndicator.style.transform = 'translate(-50%, -50%)';
+                    difficultyIndicator.style.color = '#ff6b6b';
+                    difficultyIndicator.style.fontSize = '48px';
+                    difficultyIndicator.style.fontWeight = 'bold';
+                    difficultyIndicator.style.textShadow = '2px 2px 4px rgba(0,0,0,0.8)';
+                    difficultyIndicator.style.zIndex = '1000';
+                    difficultyIndicator.style.pointerEvents = 'none';
+                    difficultyIndicator.textContent = `NIVEL ${difficulty}`;
+                    gameContainer.appendChild(difficultyIndicator);
+                    
+                    setTimeout(() => {
+                        difficultyIndicator.remove();
+                    }, 2000);
+                }
+            }, 8000); // Aumentar dificultad cada 8 segundos
+            
+            setTimeout(difficultyLoop, 8000);
+        }
+
+        function updateUI() {
+            document.getElementById('score').textContent = score;
+            document.getElementById('coins').textContent = coins;
+            document.getElementById('time').textContent = timeLeft;
+            
+            const accuracy = shots > 0 ? Math.round((hits / shots) * 100) : 0;
+            document.getElementById('accuracy').textContent = accuracy;
+        }
+
+        function endGame() {
+            gameRunning = false;
+            
+            // Guardar monedas en localStorage
+            const currentCoins = parseInt(localStorage.getItem('coins') || '0');
+            localStorage.setItem('coins', (currentCoins + coins).toString());
+            
+            // Mostrar resultados finales
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalCoins').textContent = coins;
+            const accuracy = shots > 0 ? Math.round((hits / shots) * 100) : 0;
+            document.getElementById('finalAccuracy').textContent = accuracy;
+            
+            document.getElementById('gameOver').style.display = 'flex';
+        }
+
+        async function restartGame() {
+            // Limpiar elementos del juego
+            targets.forEach(target => target.remove());
+            powerUps.forEach(powerUp => powerUp.remove());
+            targets = [];
+            powerUps = [];
+            
+            // Resetear variables
+            score = 0;
+            coins = 0;
+            timeLeft = 60;
+            gameRunning = true;
+            gamePaused = false;
+            hits = 0;
+            shots = 0;
+            difficulty = 1;
+            powerUpActive = false;
+            powerUpTimer = 0;
+            
+            // Ocultar game over y pause menu
+            document.getElementById('gameOver').style.display = 'none';
+            document.getElementById('pauseMenu').style.display = 'none';
+            
+            // Reiniciar (sin mascota)
+            // pet.style.filter = '';
+            const indicator = document.getElementById('powerUpIndicator');
+            if (indicator) indicator.remove();
+            
+            // Reiniciar juego
+            await initGame();
+        }
+
+        function setupPauseControls() {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (gamePaused) {
+                        resumeGame();
+                    } else {
+                        pauseGame();
+                    }
+                }
+            });
+        }
+
+        function pauseGame() {
+            if (!gameRunning || gamePaused) return;
+            
+            gamePaused = true;
+            document.getElementById('pauseMenu').style.display = 'flex';
+            crosshair.style.display = 'none';
+        }
+
+        function resumeGame() {
+            if (!gamePaused) return;
+            
+            gamePaused = false;
+            document.getElementById('pauseMenu').style.display = 'none';
+            crosshair.style.display = 'block';
+        }
+
+        function goToMenu() {
+            window.location.href = '../minijuegos.html';
+        }
+
+        // Iniciar juego cuando se carga la página
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Puzzle - HeroPet Legends</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            color: white;
+            font-size: 18px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        .time, .moves, .coins {
+            margin-bottom: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .puzzle-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            width: 300px;
+            height: 300px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .puzzle-piece {
+            width: 100%;
+            height: 100%;
+            background-size: 300px 300px;
+            border: 1px solid #fff;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            position: relative;
+        }
+
+        .puzzle-piece:hover {
+            transform: scale(0.98);
+        }
+
+        .puzzle-piece.correct {
+            border-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        .puzzle-piece.wrong {
+            border-color: #f44336;
+            box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+        }
+
+        .empty-piece {
+            background: linear-gradient(45deg, #ddd, #bbb);
+            border: 2px dashed #999;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .control-btn {
+            background: linear-gradient(45deg, #feca57, #ff9ff3);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .hint-btn {
+            background: linear-gradient(45deg, #4ECDC4, #44A08D);
+        }
+
+        .shuffle-btn {
+            background: linear-gradient(45deg, #FF6B6B, #EE5A24);
+        }
+
+        .game-over, .pause-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .game-over-content, .pause-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .game-over h2, .pause-content h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .game-over p, .pause-content p {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .game-over button, .pause-content button {
+            background: linear-gradient(45deg, #feca57, #ff9ff3);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+
+        .game-over button:hover, .pause-content button:hover {
+            transform: scale(1.05);
+        }
+
+        .hint-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4ECDC4;
+            font-size: 48px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            z-index: 1000;
+            pointer-events: none;
+            animation: hintPop 0.5s ease-out forwards;
+        }
+
+        @keyframes hintPop {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+        }
+
+        .success-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(76, 175, 80, 0.3) 0%, transparent 70%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            animation: successFade 2s ease-out forwards;
+        }
+
+        .success-text {
+            color: #4CAF50;
+            font-size: 72px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            animation: successBounce 0.5s ease-out;
+        }
+
+        @keyframes successFade {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        @keyframes successBounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .controls-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 16px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container" id="gameContainer">
+        <div class="ui">
+            <div class="time">Tiempo: <span id="time">00:00</span></div>
+            <div class="moves">Movimientos: <span id="moves">0</span></div>
+            <div class="coins">Monedas: <span id="coins">0</span></div>
+        </div>
+
+        <div class="puzzle-container">
+            <div class="puzzle-grid" id="puzzleGrid">
+                <!-- Las piezas se generarán dinámicamente -->
+            </div>
+            
+            <div class="controls">
+                <button class="control-btn hint-btn" onclick="useHint()">💡 Pista (<span id="hintsLeft">3</span>)</button>
+                <button class="control-btn shuffle-btn" onclick="shufflePuzzle()">🔀 Mezclar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls-hint">
+        ESC: Pausar | Click: Mover pieza | Arrastra para intercambiar
+    </div>
+
+    <div class="game-over" id="gameOver">
+        <div class="game-over-content">
+            <h2>🧩 ¡Puzzle Completado!</h2>
+            <p>Tiempo: <span id="finalTime">00:00</span></p>
+            <p>Movimientos: <span id="finalMoves">0</span></p>
+            <p>Monedas ganadas: <span id="finalCoins">0</span></p>
+            <button onclick="restartGame()">Jugar de nuevo</button>
+            <button onclick="goToMenu()">Volver al menú</button>
+        </div>
+    </div>
+
+    <div class="pause-menu" id="pauseMenu">
+        <div class="pause-content">
+            <h2>⏸️ Juego Pausado</h2>
+            <p>Presiona ESC para continuar</p>
+            <button onclick="resumeGame()">Continuar</button>
+            <button onclick="restartGame()">Reiniciar</button>
+            <button onclick="goToMenu()">Salir al menú</button>
+        </div>
+    </div>
+
+    <script>
+        let gameRunning = true;
+        let gamePaused = false;
+        let startTime = Date.now();
+        let moves = 0;
+        let coins = 0;
+        let hints = 3;
+        let puzzlePieces = [];
+        let correctOrder = [];
+        let selectedPiece = null;
+        let currentPattern = null; // Patrón actual del puzzle
+        let currentPuzzleImage = null; // Imagen actual del puzzle
+
+        const puzzleGrid = document.getElementById('puzzleGrid');
+
+        // Cargar mascota del usuario
+        async function cargarMascotaUsuario() {
+            const mascotaId = localStorage.getItem('mascotaSeleccionada');
+            const token = localStorage.getItem('gameToken');
+            
+            if (mascotaId && token) {
+                try {
+                    const response = await fetch(`/api/pets/${mascotaId}`, {
+                        headers: {
+                            'Authorization': 'Bearer ' + token
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const mascota = await response.json();
+                        return mascota;
+                    }
+                } catch (error) {
+                    console.error('Error cargando mascota:', error);
+                }
+            }
+            return null;
+        }
+
+        async function initGame() {
+            const mascota = await cargarMascotaUsuario();
+            createPuzzle(mascota);
+            setupPauseControls();
+            updateUI();
+            gameLoop();
+        }
+
+        function createPuzzle(mascota) {
+            // Seleccionar un patrón aleatorio solo al inicio del juego
+            if (!currentPattern) {
+                const patterns = [
+                    'geometric',
+                    'maze',
+                    'spiral',
+                    'checkerboard',
+                    'gradient',
+                    'stars',
+                    'circles',
+                    'triangles',
+                    'hexagons',
+                    'waves'
+                ];
+                currentPattern = patterns[Math.floor(Math.random() * patterns.length)];
+                currentPuzzleImage = createPatternImage(currentPattern);
+            }
+            
+            // Crear 9 piezas del puzzle (3x3)
+            puzzlePieces = [];
+            correctOrder = [];
+            
+            for (let i = 0; i < 9; i++) {
+                const row = Math.floor(i / 3);
+                const col = i % 3;
+                
+                const piece = {
+                    id: i,
+                    correctPosition: i,
+                    currentPosition: i,
+                    backgroundPosition: `${-col * 100}px ${-row * 100}px`
+                };
+                
+                puzzlePieces.push(piece);
+                correctOrder.push(i);
+            }
+            
+            // Mezclar las piezas al inicio
+            shufflePuzzle();
+            renderPuzzle();
+        }
+
+        // Estas funciones ya no se usan, pero las mantenemos por compatibilidad
+        function createPetImage(mascota) {
+            return currentPuzzleImage || createPatternImage('geometric');
+        }
+
+        function createDefaultPetImage() {
+            return currentPuzzleImage || createPatternImage('geometric');
+        }
+
+        function createPatternImage(pattern) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 300;
+            canvas.height = 300;
+            const ctx = canvas.getContext('2d');
+            
+            // Limpiar canvas
+            ctx.clearRect(0, 0, 300, 300);
+            
+            switch(pattern) {
+                case 'geometric':
+                    createGeometricPattern(ctx);
+                    break;
+                case 'maze':
+                    createMazePattern(ctx);
+                    break;
+                case 'spiral':
+                    createSpiralPattern(ctx);
+                    break;
+                case 'checkerboard':
+                    createCheckerboardPattern(ctx);
+                    break;
+                case 'gradient':
+                    createGradientPattern(ctx);
+                    break;
+                case 'stars':
+                    createStarsPattern(ctx);
+                    break;
+                case 'circles':
+                    createCirclesPattern(ctx);
+                    break;
+                case 'triangles':
+                    createTrianglesPattern(ctx);
+                    break;
+                case 'hexagons':
+                    createHexagonsPattern(ctx);
+                    break;
+                case 'waves':
+                    createWavesPattern(ctx);
+                    break;
+                default:
+                    createGeometricPattern(ctx);
+            }
+            
+            return canvas.toDataURL();
+        }
+
+        function createGeometricPattern(ctx) {
+            // Patrón geométrico complejo
+            const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD'];
+            
+            // Fondo
+            ctx.fillStyle = '#2C3E50';
+            ctx.fillRect(0, 0, 300, 300);
+            
+            // Cuadrados superpuestos
+            for (let i = 0; i < 8; i++) {
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.fillRect(20 + i * 15, 20 + i * 10, 260 - i * 30, 260 - i * 20);
+            }
+            
+            // Círculos en las esquinas
+            ctx.fillStyle = '#E74C3C';
+            ctx.beginPath();
+            ctx.arc(50, 50, 30, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(250, 50, 30, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(50, 250, 30, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(250, 250, 30, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        function createMazePattern(ctx) {
+            // Patrón de laberinto
+            ctx.fillStyle = '#34495E';
+            ctx.fillRect(0, 0, 300, 300);
+            
+            ctx.strokeStyle = '#ECF0F1';
+            ctx.lineWidth = 3;
+            
+            // Líneas horizontales
+            for (let y = 30; y < 270; y += 30) {
+                ctx.beginPath();
+                ctx.moveTo(30, y);
+                ctx.lineTo(270, y);
+                ctx.stroke();
+            }
+            
+            // Líneas verticales
+            for (let x = 30; x < 270; x += 30) {
+                ctx.beginPath();
+                ctx.moveTo(x, 30);
+                ctx.lineTo(x, 270);
+                ctx.stroke();
+            }
+            
+            // Puntos de intersección
+            ctx.fillStyle = '#E74C3C';
+            for (let x = 30; x <= 270; x += 30) {
+                for (let y = 30; y <= 270; y += 30) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+        }
+
+        function createSpiralPattern(ctx) {
+            // Patrón de espiral
+            ctx.fillStyle = '#2C3E50';
+            ctx.fillRect(0, 0, 300, 300);
+            
+            ctx.strokeStyle = '#3498DB';
+            ctx.lineWidth = 4;
+            
+            let x = 150, y = 150;
+            let angle = 0;
+            let radius = 5;
+            
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            
+            for (let i = 0; i < 200; i++) {
+                x = 150 + Math.cos(angle) * radius;
+                y = 150 + Math.sin(angle) * radius;
+                ctx.lineTo(x, y);
+                angle += 0.3;
+                radius += 0.5;
+            }
+            
+            ctx.stroke();
+            
+            // Puntos en la espiral
+            ctx.fillStyle = '#E74C3C';
+            for (let i = 0; i < 20; i++) {
+                const a = i * 0.5;
+                const r = 10 + i * 8;
+                const px = 150 + Math.cos(a) * r;
+                const py = 150 + Math.sin(a) * r;
+                ctx.beginPath();
+                ctx.arc(px, py, 6, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+
+        function createCheckerboardPattern(ctx) {
+            // Patrón de tablero de ajedrez
+            const colors = ['#E74C3C', '#3498DB', '#2ECC71', '#F1C40F', '#9B59B6'];
+            
+            for (let x = 0; x < 300; x += 25) {
+                for (let y = 0; y < 300; y += 25) {
+                    const colorIndex = Math.floor((x / 25 + y / 25) % colors.length);
+                    ctx.fillStyle = colors[colorIndex];
+                    ctx.fillRect(x, y, 25, 25);
+                }
+            }
+            
+            // Círculos en el centro
+            ctx.fillStyle = '#2C3E50';
+            ctx.beginPath();
+            ctx.arc(150, 150, 40, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.fillStyle = '#ECF0F1';
+            ctx.beginPath();
+            ctx.arc(150, 150, 25, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        function createGradientPattern(ctx) {
+            // Patrón de gradientes múltiples
+            const gradients = [
+                ctx.createLinearGradient(0, 0, 300, 300),
+                ctx.createRadialGradient(150, 150, 0, 150, 150, 150),
+                ctx.createLinearGradient(0, 300, 300, 0)
+            ];
+            
+            gradients[0].addColorStop(0, '#FF6B6B');
+            gradients[0].addColorStop(0.5, '#4ECDC4');
+            gradients[0].addColorStop(1, '#45B7D1');
+            
+            gradients[1].addColorStop(0, '#96CEB4');
+            gradients[1].addColorStop(0.7, '#FFEAA7');
+            gradients[1].addColorStop(1, '#DDA0DD');
+            
+            gradients[2].addColorStop(0, '#E74C3C');
+            gradients[2].addColorStop(0.5, '#3498DB');
+            gradients[2].addColorStop(1, '#2ECC71');
+            
+            // Aplicar gradientes en secciones
+            ctx.fillStyle = gradients[0];
+            ctx.fillRect(0, 0, 300, 100);
+            
+            ctx.fillStyle = gradients[1];
+            ctx.fillRect(0, 100, 300, 100);
+            
+            ctx.fillStyle = gradients[2];
+            ctx.fillRect(0, 200, 300, 100);
+            
+            // Líneas divisorias
+            ctx.strokeStyle = '#2C3E50';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, 100);
+            ctx.lineTo(300, 100);
+            ctx.moveTo(0, 200);
+            ctx.lineTo(300, 200);
+            ctx.stroke();
+        }
+
+        function createStarsPattern(ctx) {
+            // Patrón de estrellas
+            ctx.fillStyle = '#2C3E50';
+            ctx.fillRect(0, 0, 300, 300);
+            
+            const colors = ['#F1C40F', '#E74C3C', '#3498DB', '#2ECC71', '#9B59B6'];
+            
+            for (let i = 0; i < 15; i++) {
+                const x = 30 + Math.random() * 240;
+                const y = 30 + Math.random() * 240;
+                const size = 10 + Math.random() * 20;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                drawStar(ctx, x, y, size, color);
+            }
+        }
+
+        function drawStar(ctx, x, y, size, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            
+            for (let i = 0; i < 5; i++) {
+                const angle = (i * 4 * Math.PI) / 5;
+                const px = x + Math.cos(angle) * size;
+                const py = y + Math.sin(angle) * size;
+                
+                if (i === 0) {
+                    ctx.moveTo(px, py);
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function createCirclesPattern(ctx) {
+            // Patrón de círculos concéntricos
+            ctx.fillStyle = '#34495E';
+            ctx.fillRect(0, 0, 300, 300);
+            
+            const colors = ['#E74C3C', '#3498DB', '#2ECC71', '#F1C40F', '#9B59B6'];
+            
+            for (let i = 0; i < 8; i++) {
+                ctx.fillStyle = colors[i % colors.length];
+                ctx.beginPath();
+                ctx.arc(150, 150, 140 - i * 15, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            
+            // Círculo central
+            ctx.fillStyle = '#2C3E50';
+            ctx.beginPath();
+            ctx.arc(150, 150, 20, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+
+        function createTrianglesPattern(ctx) {
+            // Patrón de triángulos
+            ctx.fillStyle = '#2C3E50';
+            ctx.fillRect(0, 0, 300, 300);
+            
+            const colors = ['#E74C3C', '#3498DB', '#2ECC71', '#F1C40F', '#9B59B6'];
+            
+            for (let i = 0; i < 12; i++) {
+                const x = 50 + (i % 4) * 60;
+                const y = 50 + Math.floor(i / 4) * 60;
+                const color = colors[i % colors.length];
+                
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + 40, y);
+                ctx.lineTo(x + 20, y + 40);
+                ctx.closePath();
+                ctx.fill();
+            }
+        }
+
+        function createHexagonsPattern(ctx) {
+            // Patrón de hexágonos
+            ctx.fillStyle = '#34495E';
+            ctx.fillRect(0, 0, 300, 300);
+            
+            const colors = ['#E74C3C', '#3498DB', '#2ECC71', '#F1C40F', '#9B59B6'];
+            
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 6; col++) {
+                    const x = 30 + col * 45;
+                    const y = 30 + row * 40;
+                    const color = colors[(row + col) % colors.length];
+                    
+                    drawHexagon(ctx, x, y, 20, color);
+                }
+            }
+        }
+
+        function drawHexagon(ctx, x, y, size, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            
+            for (let i = 0; i < 6; i++) {
+                const angle = (i * Math.PI) / 3;
+                const px = x + Math.cos(angle) * size;
+                const py = y + Math.sin(angle) * size;
+                
+                if (i === 0) {
+                    ctx.moveTo(px, py);
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function createWavesPattern(ctx) {
+            // Patrón de ondas
+            ctx.fillStyle = '#2C3E50';
+            ctx.fillRect(0, 0, 300, 300);
+            
+            const colors = ['#E74C3C', '#3498DB', '#2ECC71', '#F1C40F', '#9B59B6'];
+            
+            for (let i = 0; i < 5; i++) {
+                ctx.strokeStyle = colors[i % colors.length];
+                ctx.lineWidth = 8;
+                ctx.beginPath();
+                
+                for (let x = 0; x < 300; x += 5) {
+                    const y = 60 + i * 40 + Math.sin(x * 0.02) * 20;
+                    if (x === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                
+                ctx.stroke();
+            }
+        }
+
+        function renderPuzzle() {
+            puzzleGrid.innerHTML = '';
+            
+            // Crear array de posiciones para mostrar las piezas en el orden correcto
+            const displayOrder = new Array(9);
+            puzzlePieces.forEach(piece => {
+                displayOrder[piece.currentPosition] = piece;
+            });
+            
+            // Usar la imagen actual del puzzle (no crear una nueva)
+            for (let i = 0; i < 9; i++) {
+                const piece = displayOrder[i];
+                const pieceElement = document.createElement('div');
+                pieceElement.className = 'puzzle-piece';
+                pieceElement.dataset.id = piece.id;
+                pieceElement.style.backgroundImage = `url(${currentPuzzleImage})`;
+                pieceElement.style.backgroundPosition = piece.backgroundPosition;
+                
+                pieceElement.addEventListener('click', () => selectPiece(piece.id));
+                pieceElement.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', piece.id);
+                });
+                pieceElement.addEventListener('dragover', (e) => e.preventDefault());
+                pieceElement.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const draggedId = parseInt(e.dataTransfer.getData('text/plain'));
+                    swapPieces(draggedId, piece.id);
+                });
+                
+                puzzleGrid.appendChild(pieceElement);
+            }
+            
+            checkWinCondition();
+        }
+
+        function selectPiece(pieceId) {
+            if (gamePaused) return;
+            
+            if (selectedPiece === null) {
+                selectedPiece = pieceId;
+                document.querySelector(`[data-id="${pieceId}"]`).style.border = '3px solid #4CAF50';
+            } else if (selectedPiece === pieceId) {
+                selectedPiece = null;
+                document.querySelector(`[data-id="${pieceId}"]`).style.border = '1px solid #fff';
+            } else {
+                swapPieces(selectedPiece, pieceId);
+                document.querySelector(`[data-id="${selectedPiece}"]`).style.border = '1px solid #fff';
+                selectedPiece = null;
+            }
+        }
+
+        function swapPieces(id1, id2) {
+            if (gamePaused) return;
+            
+            const piece1 = puzzlePieces.find(p => p.id === id1);
+            const piece2 = puzzlePieces.find(p => p.id === id2);
+            
+            if (piece1 && piece2) {
+                const tempPosition = piece1.currentPosition;
+                piece1.currentPosition = piece2.currentPosition;
+                piece2.currentPosition = tempPosition;
+                
+                moves++;
+                renderPuzzle();
+                updateUI();
+            }
+        }
+
+        function shufflePuzzle() {
+            if (gamePaused) return;
+            
+            // Mezclar las posiciones actuales con más movimientos para mayor dificultad
+            for (let shuffle = 0; shuffle < 50; shuffle++) {
+                for (let i = puzzlePieces.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    const temp = puzzlePieces[i].currentPosition;
+                    puzzlePieces[i].currentPosition = puzzlePieces[j].currentPosition;
+                    puzzlePieces[j].currentPosition = temp;
+                }
+            }
+            
+            // Verificar que no esté resuelto por casualidad
+            if (checkWinCondition()) {
+                // Si por casualidad quedó resuelto, mezclar una vez más
+                for (let i = puzzlePieces.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    const temp = puzzlePieces[i].currentPosition;
+                    puzzlePieces[i].currentPosition = puzzlePieces[j].currentPosition;
+                    puzzlePieces[j].currentPosition = temp;
+                }
+            }
+            
+            moves = 0;
+            renderPuzzle();
+            updateUI();
+        }
+
+        function useHint() {
+            if (gamePaused || hints <= 0) return;
+            
+            hints--;
+            
+            // Encontrar una pieza que esté en posición incorrecta
+            const wrongPiece = puzzlePieces.find(p => p.currentPosition !== p.correctPosition);
+            if (wrongPiece) {
+                const pieceElement = document.querySelector(`[data-id="${wrongPiece.id}"]`);
+                pieceElement.style.border = '3px solid #4ECDC4';
+                pieceElement.style.boxShadow = '0 0 15px rgba(78, 205, 196, 0.8)';
+                
+                // También mostrar dónde debería ir
+                const correctPiece = puzzlePieces.find(p => p.correctPosition === wrongPiece.correctPosition);
+                if (correctPiece) {
+                    const correctElement = document.querySelector(`[data-id="${correctPiece.id}"]`);
+                    if (correctElement) {
+                        correctElement.style.border = '3px solid #FFD700';
+                        correctElement.style.boxShadow = '0 0 15px rgba(255, 215, 0, 0.8)';
+                        
+                        setTimeout(() => {
+                            correctElement.style.border = '1px solid #fff';
+                            correctElement.style.boxShadow = 'none';
+                        }, 2000);
+                    }
+                }
+                
+                setTimeout(() => {
+                    pieceElement.style.border = '1px solid #fff';
+                    pieceElement.style.boxShadow = 'none';
+                }, 2000);
+            }
+            
+            updateUI();
+        }
+
+        function checkWinCondition() {
+            const isComplete = puzzlePieces.every(piece => piece.currentPosition === piece.correctPosition);
+            
+            if (isComplete && gameRunning) {
+                endGame();
+            }
+            
+            return isComplete;
+        }
+
+        function setupPauseControls() {
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (gamePaused) {
+                        resumeGame();
+                    } else {
+                        pauseGame();
+                    }
+                }
+            });
+        }
+
+        function gameLoop() {
+            if (!gameRunning || gamePaused) return;
+            
+            updateUI();
+            requestAnimationFrame(gameLoop);
+        }
+
+        function updateUI() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('time').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('moves').textContent = moves;
+            document.getElementById('coins').textContent = coins;
+            document.getElementById('hintsLeft').textContent = hints;
+        }
+
+        function endGame() {
+            gameRunning = false;
+            
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Calcular monedas basadas en tiempo y movimientos (más difícil)
+            const baseCoins = 30; // Menos monedas base
+            const timeBonus = Math.max(0, 60 - elapsed) * 1.5; // Más tiempo, menos bonus
+            const moveBonus = Math.max(0, 30 - moves) * 2; // Más movimientos permitidos
+            coins = Math.floor(baseCoins + timeBonus + moveBonus);
+            
+            // Guardar monedas en localStorage
+            const currentCoins = parseInt(localStorage.getItem('coins') || '0');
+            localStorage.setItem('coins', (currentCoins + coins).toString());
+            
+            // Mostrar animación de éxito
+            showSuccessAnimation();
+            
+            // Resetear el patrón para el siguiente juego
+            currentPattern = null;
+            currentPuzzleImage = null;
+            
+            setTimeout(() => {
+                document.getElementById('finalTime').textContent = timeString;
+                document.getElementById('finalMoves').textContent = moves;
+                document.getElementById('finalCoins').textContent = coins;
+                document.getElementById('gameOver').style.display = 'flex';
+            }, 2000);
+        }
+
+        function showSuccessAnimation() {
+            const animation = document.createElement('div');
+            animation.className = 'success-animation';
+            animation.innerHTML = '<div class="success-text">🎉 ¡ÉXITO!</div>';
+            document.body.appendChild(animation);
+            
+            setTimeout(() => {
+                animation.remove();
+            }, 2000);
+        }
+
+        function pauseGame() {
+            if (!gameRunning || gamePaused) return;
+            
+            gamePaused = true;
+            document.getElementById('pauseMenu').style.display = 'flex';
+        }
+
+        function resumeGame() {
+            if (!gamePaused) return;
+            
+            gamePaused = false;
+            document.getElementById('pauseMenu').style.display = 'none';
+        }
+
+        async function restartGame() {
+            // Resetear variables
+            gameRunning = true;
+            gamePaused = false;
+            startTime = Date.now();
+            moves = 0;
+            coins = 0;
+            hints = 3;
+            selectedPiece = null;
+            
+            // Ocultar menús
+            document.getElementById('gameOver').style.display = 'none';
+            document.getElementById('pauseMenu').style.display = 'none';
+            
+            // Reiniciar juego
+            await initGame();
+        }
+
+        function goToMenu() {
+            window.location.href = '../minijuegos.html';
+        }
+
+        // Iniciar juego cuando se carga la página
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html> 
