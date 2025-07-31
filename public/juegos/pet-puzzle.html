@@ -124,6 +124,10 @@
             background: linear-gradient(45deg, #FF6B6B, #EE5A24);
         }
 
+        .change-puzzle-btn {
+            background: linear-gradient(45deg, #9B59B6, #8E44AD);
+        }
+
         .game-over, .pause-menu {
             position: fixed;
             top: 0;
@@ -258,6 +262,7 @@
             <div class="controls">
                 <button class="control-btn hint-btn" onclick="useHint()">💡 Pista (<span id="hintsLeft">3</span>)</button>
                 <button class="control-btn shuffle-btn" onclick="shufflePuzzle()">🔀 Mezclar</button>
+                <button class="control-btn change-puzzle-btn" onclick="changePuzzle()">🎨 Cambiar (10)</button>
             </div>
         </div>
     </div>
@@ -330,6 +335,11 @@
             const mascota = await cargarMascotaUsuario();
             createPuzzle(mascota);
             setupPauseControls();
+            
+            // Cargar monedas actuales
+            const currentCoins = parseInt(localStorage.getItem('coins') || '0');
+            coins = currentCoins;
+            
             updateUI();
             gameLoop();
         }
@@ -912,7 +922,11 @@
             const seconds = elapsed % 60;
             document.getElementById('time').textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             document.getElementById('moves').textContent = moves;
-            document.getElementById('coins').textContent = coins;
+            
+            // Mostrar monedas totales (no solo las ganadas en este juego)
+            const totalCoins = parseInt(localStorage.getItem('coins') || '0');
+            document.getElementById('coins').textContent = totalCoins;
+            
             document.getElementById('hintsLeft').textContent = hints;
         }
 
@@ -928,11 +942,14 @@
             const baseCoins = 30; // Menos monedas base
             const timeBonus = Math.max(0, 60 - elapsed) * 1.5; // Más tiempo, menos bonus
             const moveBonus = Math.max(0, 30 - moves) * 2; // Más movimientos permitidos
-            coins = Math.floor(baseCoins + timeBonus + moveBonus);
+            const earnedCoins = Math.floor(baseCoins + timeBonus + moveBonus);
             
             // Guardar monedas en localStorage
             const currentCoins = parseInt(localStorage.getItem('coins') || '0');
-            localStorage.setItem('coins', (currentCoins + coins).toString());
+            localStorage.setItem('coins', (currentCoins + earnedCoins).toString());
+            
+            // Actualizar variable local para mostrar en el resultado
+            coins = earnedCoins;
             
             // Mostrar animación de éxito
             showSuccessAnimation();
@@ -990,6 +1007,30 @@
             
             // Reiniciar juego
             await initGame();
+        }
+
+        function changePuzzle() {
+            // Verificar si tiene suficientes monedas
+            const currentCoins = parseInt(localStorage.getItem('coins') || '0');
+            if (currentCoins < 10) {
+                alert('¡Necesitas 10 monedas para cambiar de rompecabezas!');
+                return;
+            }
+            
+            // Confirmar el cambio
+            if (!confirm('¿Estás seguro de que quieres cambiar de rompecabezas? Esto te costará 10 monedas.')) {
+                return;
+            }
+            
+            // Descontar monedas
+            localStorage.setItem('coins', (currentCoins - 10).toString());
+            
+            // Resetear el patrón actual para que se genere uno nuevo
+            currentPattern = null;
+            currentPuzzleImage = null;
+            
+            // Reiniciar el juego con nuevo patrón
+            restartGame();
         }
 
         function goToMenu() {

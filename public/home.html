@@ -50,6 +50,134 @@
       background: linear-gradient(135deg, #0072ff, #00c6ff);
     }
     
+    /* Estilos para el menú hamburguesa */
+    #menuBtn {
+      font-size: 1.5rem;
+      padding: 0.7rem 1rem;
+      background: linear-gradient(135deg, #ff9800, #f57c00);
+    }
+    
+    #menuBtn:hover {
+      background: linear-gradient(135deg, #f57c00, #ff9800);
+    }
+    
+    /* Panel lateral del menú */
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      width: 300px;
+      height: 100vh;
+      background: linear-gradient(135deg, #1a2340, #2c3e50);
+      box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+      transition: right 0.3s ease-in-out;
+      z-index: 1000;
+      border-left: 2px solid #00c6ff;
+    }
+    
+    .side-menu.active {
+      right: 0;
+    }
+    
+    .side-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      background: rgba(0,0,0,0.2);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .side-menu-header h3 {
+      color: white;
+      margin: 0;
+      font-size: 1.3rem;
+    }
+    
+    .close-menu-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: background 0.2s;
+    }
+    
+    .close-menu-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .side-menu-content {
+      padding: 1rem;
+    }
+    
+    .side-menu-btn {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    .side-menu-btn:hover {
+      background: linear-gradient(135deg, #0072ff, #00c6ff);
+      transform: translateX(-5px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    
+    .cerrar-sesion-btn {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      margin-top: auto;
+    }
+    
+    .cerrar-sesion-btn:hover {
+      background: linear-gradient(135deg, #c0392b, #e74c3c);
+    }
+    
+    .menu-icon {
+      font-size: 1.5rem;
+      margin-right: 1rem;
+      min-width: 30px;
+    }
+    
+    .menu-text {
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    
+    /* Overlay para cerrar el menú */
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease-in-out;
+    }
+    
+    .menu-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
     /* Animación de baño */
     .bath-animation {
       position: absolute;
@@ -1073,16 +1201,45 @@
 </head>
 <body>
   <div class="home-container">
-    <nav class="nav-bar">
-      <button class="nav-btn" id="pasearBtn">Pasear</button>
-      <button class="nav-btn" id="banarBtn">Bañar</button>
-      <button class="nav-btn" id="alimentarBtn">Alimentar</button>
-      <button class="nav-btn" onclick="mostrarInventario()">📦 Inventario</button>
-      <button class="nav-btn" onclick="mostrarAdopcion()">🐾 Adoptar</button>
-      <button class="nav-btn" onclick="window.location.href='minijuegos.html'">🎮 Minijuegos</button>
-      <button class="nav-btn" onclick="window.location.href='tienda.html'">🛒 Tienda</button>
-      <button class="nav-btn" id="logoutBtn" style="margin-left:3rem;background:#ff5252;">Cerrar sesión</button>
-    </nav>
+                    <nav class="nav-bar">
+                  <button class="nav-btn" id="pasearBtn">Pasear</button>
+                  <button class="nav-btn" id="banarBtn">Bañar</button>
+                  <button class="nav-btn" id="alimentarBtn">Alimentar</button>
+                  <button class="nav-btn" id="menuBtn" onclick="toggleMenu()">☰</button>
+                </nav>
+    
+    <!-- Panel lateral del menú -->
+    <div class="side-menu" id="sideMenu">
+      <div class="side-menu-header">
+        <h3>Menú</h3>
+        <button class="close-menu-btn" onclick="toggleMenu()">×</button>
+      </div>
+                        <div class="side-menu-content">
+                    <button class="side-menu-btn" onclick="mostrarInventario()">
+                      <span class="menu-icon">📦</span>
+                      <span class="menu-text">Inventario</span>
+                    </button>
+                    <button class="side-menu-btn" onclick="mostrarAdopcion()">
+                      <span class="menu-icon">🐾</span>
+                      <span class="menu-text">Adoptar</span>
+                    </button>
+                    <button class="side-menu-btn" onclick="window.location.href='minijuegos.html'">
+                      <span class="menu-icon">🎮</span>
+                      <span class="menu-text">Minijuegos</span>
+                    </button>
+                    <button class="side-menu-btn" onclick="window.location.href='tienda.html'">
+                      <span class="menu-icon">🛒</span>
+                      <span class="menu-text">Tienda</span>
+                    </button>
+                    <button class="side-menu-btn cerrar-sesion-btn" onclick="logout()">
+                      <span class="menu-icon">🚪</span>
+                      <span class="menu-text">Cerrar sesión</span>
+                    </button>
+                  </div>
+    </div>
+    
+    <!-- Overlay para cerrar el menú -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
     
     <!-- Sección de estadísticas de la mascota -->
     <section class="home-section" id="stats-section" style="position: absolute; left: 20px; top: 100px; width: 280px; max-width: 280px;">
@@ -2318,10 +2475,11 @@ function crearAnimacionCuracion() {
   }, 2500);
 }
 
-document.getElementById('logoutBtn').onclick = function() {
+// Función para cerrar sesión
+function logout() {
   localStorage.clear();
   window.location.href = 'index.html';
-};
+}
 
 // Función para mostrar el inventario
 function mostrarInventario() {
@@ -2568,6 +2726,35 @@ function getEmojiMascota(tipo) {
     default: return '🐾';
   }
 }
+
+// Función para manejar el menú hamburguesa
+function toggleMenu() {
+  const sideMenu = document.getElementById('sideMenu');
+  const menuOverlay = document.getElementById('menuOverlay');
+  
+  if (sideMenu.classList.contains('active')) {
+    // Cerrar menú
+    sideMenu.classList.remove('active');
+    menuOverlay.classList.remove('active');
+  } else {
+    // Abrir menú
+    sideMenu.classList.add('active');
+    menuOverlay.classList.add('active');
+  }
+}
+
+// Cerrar menú con la tecla Escape
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    const sideMenu = document.getElementById('sideMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    
+    if (sideMenu.classList.contains('active')) {
+      sideMenu.classList.remove('active');
+      menuOverlay.classList.remove('active');
+    }
+  }
+});
   </script>
 
   <!-- Modal de Inventario -->
