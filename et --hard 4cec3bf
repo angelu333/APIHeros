@@ -1,0 +1,10 @@
+[33m2b0357a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Arreglo completo de responsividad móvil - menú hamburguesa funcional, estructura flexible, botones optimizados
+[33m9e0a50c[m Mejoras completas de responsividad móvil - botones optimizados, touch feedback mejorado, navegación táctil
+[33m4cec3bf[m Fix: Corregir visualización de mascotas en Catch the Treat y mejoras en Pet Puzzle
+[33m44b32ee[m Agregar sistema completo: adopción de mascotas, inventario, minijuegos y tienda
+[33me7e35a8[m Agregar sistema de adopción/desadopción de mascotas
+[33mff113ce[m Actualización del juego: agregados servicios de mascotas, mejoras en controladores y documentación
+[33mb983cf1[m fix: actualizo contraseña de MongoDB Atlas en db.js
+[33m85978c3[m Filtrar héroes adoptantes por usuario y guardar datos dinámicos de mascotas en la base
+[33m324b8af[m Corregir comparación de IDs en getHeroesWithPets para mostrar mascota adoptada
+[33mf6bf8ff[m Corregir tipo de petId: ahora es ObjectId y referencia a Pet

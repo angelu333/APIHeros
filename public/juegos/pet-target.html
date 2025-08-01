@@ -50,8 +50,8 @@
 
         .target {
             position: absolute;
-            width: 60px;
-            height: 60px;
+            width: 80px; /* Aumentado de 60px a 80px para hacer más fácil perder */
+            height: 80px; /* Aumentado de 60px a 80px para hacer más fácil perder */
             cursor: pointer;
             transition: all 0.2s ease;
             animation: float 2s ease-in-out infinite;
@@ -419,7 +419,8 @@
     <div class="game-container" id="gameContainer">
         <div class="ui">
             <div class="score">Puntuación: <span id="score">0</span></div>
-            <div class="coins">Monedas: <span id="coins">0</span></div>
+            <div class="coins">Monedas: <span id="coins">0</span> 🪙</div>
+            <div class="lives">Vidas: <span id="lives">3</span> ❤️</div>
             <div class="time">Tiempo: <span id="time">60</span>s</div>
             <div class="accuracy">Precisión: <span id="accuracy">0</span>%</div>
         </div>
@@ -465,6 +466,7 @@
         let difficulty = 1;
         let powerUpActive = false;
         let powerUpTimer = 0;
+        let lives = 3; // Sistema de vidas
 
         const gameContainer = document.getElementById('gameContainer');
         const pet = document.getElementById('pet');
@@ -491,7 +493,7 @@
             if (!gameRunning || gamePaused) return;
             
             // Spawn múltiples targets para mayor dificultad
-            const targetCount = Math.min(3, Math.floor(difficulty / 2) + 1);
+            const targetCount = Math.min(4, Math.floor(difficulty / 2) + 2); // Más targets
             
             for (let i = 0; i < targetCount; i++) {
                 setTimeout(() => {
@@ -499,24 +501,24 @@
                     
                     const target = document.createElement('div');
                     
-                    // Decidir el tipo de target (50% hamburguesas, 50% trampas) - MUCHO MÁS DIFÍCIL
+                    // Decidir el tipo de target (MUCHO MÁS DIFÍCIL - 70% trampas, 30% hamburguesas)
                     const random = Math.random();
                     let targetType, targetClass;
                     
-                    if (random < 0.5) {
-                        // 50% hamburguesas
+                    if (random < 0.3) {
+                        // 30% hamburguesas (reducido de 50%)
                         targetType = 'hamburger';
                         targetClass = 'hamburger';
-                    } else if (random < 0.7) {
-                        // 20% bombas
+                    } else if (random < 0.55) {
+                        // 25% bombas (aumentado)
                         targetType = 'bomb';
                         targetClass = 'bomb';
-                    } else if (random < 0.85) {
-                        // 15% veneno
+                    } else if (random < 0.75) {
+                        // 20% veneno (aumentado)
                         targetType = 'poison';
                         targetClass = 'poison';
                     } else {
-                        // 15% hamburguesas falsas
+                        // 25% hamburguesas falsas (aumentado)
                         targetType = 'fake';
                         targetClass = 'fake';
                     }
@@ -524,7 +526,7 @@
                     target.className = `target ${targetClass}`;
                     target.dataset.type = targetType;
                     
-                    target.style.left = Math.random() * (window.innerWidth - 60) + 'px';
+                    target.style.left = Math.random() * (window.innerWidth - 80) + 'px'; // Ajustado para tamaño 80px
                     target.style.top = Math.random() * (window.innerHeight - 150) + 100 + 'px';
                     
                     target.addEventListener('click', () => hitTarget(target));
@@ -532,18 +534,18 @@
                     targets.push(target);
                     
                     // Eliminar target después de un tiempo (más rápido)
-                    const targetLifetime = Math.max(800, 2500 - (difficulty * 300));
+                    const targetLifetime = Math.max(600, 2000 - (difficulty * 400)); // Más rápido
                     setTimeout(() => {
                         if (target.parentNode) {
                             target.remove();
                             targets = targets.filter(t => t !== target);
                         }
                     }, targetLifetime);
-                }, i * 200);
+                }, i * 150); // Spawn más rápido
             }
             
             // Spawn más rápido
-            const spawnTime = Math.max(400, 1500 - (difficulty * 200));
+            const spawnTime = Math.max(300, 1200 - (difficulty * 300)); // Mucho más rápido
             setTimeout(spawnTargets, spawnTime);
         }
 
@@ -572,14 +574,14 @@
         }
 
         function hitTarget(target) {
-            if (!gameRunning || gamePaused) return;
+            if (gamePaused) return;
             
             shots++;
             const targetType = target.dataset.type;
             
             if (targetType === 'bomb') {
-                // ¡BOOM! Has tocado una bomba - penalización
-                hits--; // Reducir hits por tocar bomba
+                // ¡BOMBA! Perder una vida
+                lives--;
                 score = Math.max(0, score - 15); // Penalizar 15 puntos
                 coins = Math.max(0, coins - 3); // Perder 3 monedas
                 
@@ -625,9 +627,15 @@
                     explosionEffect.remove();
                 }, 400);
                 
+                // Verificar si se acabaron las vidas
+                if (lives <= 0) {
+                    endGame();
+                    return;
+                }
+                
             } else if (targetType === 'poison') {
-                // ¡VENENO! Penalización severa
-                hits--; // Reducir hits por tocar veneno
+                // ¡VENENO! Perder una vida
+                lives--;
                 score = Math.max(0, score - 20); // Penalizar 20 puntos
                 coins = Math.max(0, coins - 4); // Perder 4 monedas
                 
@@ -673,9 +681,15 @@
                     poisonEffect.remove();
                 }, 500);
                 
+                // Verificar si se acabaron las vidas
+                if (lives <= 0) {
+                    endGame();
+                    return;
+                }
+                
             } else if (targetType === 'fake') {
-                // ¡HAMBURGUESA FALSA! Penalización moderada
-                hits--; // Reducir hits por tocar hamburguesa falsa
+                // ¡HAMBURGUESA FALSA! Perder una vida
+                lives--;
                 score = Math.max(0, score - 8); // Penalizar 8 puntos
                 coins = Math.max(0, coins - 1); // Perder 1 moneda
                 
@@ -720,6 +734,12 @@
                 setTimeout(() => {
                     fakeEffect.remove();
                 }, 300);
+                
+                // Verificar si se acabaron las vidas
+                if (lives <= 0) {
+                    endGame();
+                    return;
+                }
                 
             } else {
                 // ¡Hamburguesa! Puntos normales
@@ -863,14 +883,15 @@
                         difficultyIndicator.remove();
                     }, 2000);
                 }
-            }, 8000); // Aumentar dificultad cada 8 segundos
+            }, 5000); // Aumentar dificultad cada 5 segundos (más rápido)
             
-            setTimeout(difficultyLoop, 8000);
+            setTimeout(difficultyLoop, 5000);
         }
 
         function updateUI() {
             document.getElementById('score').textContent = score;
             document.getElementById('coins').textContent = coins;
+            document.getElementById('lives').textContent = lives; // Actualizar vidas
             document.getElementById('time').textContent = timeLeft;
             
             const accuracy = shots > 0 ? Math.round((hits / shots) * 100) : 0;
@@ -889,6 +910,17 @@
             document.getElementById('finalCoins').textContent = coins;
             const accuracy = shots > 0 ? Math.round((hits / shots) * 100) : 0;
             document.getElementById('finalAccuracy').textContent = accuracy;
+            
+            // Mostrar mensaje especial si perdió por vidas
+            const gameOverContent = document.querySelector('.game-over-content');
+            if (lives <= 0) {
+                const livesLostMessage = document.createElement('p');
+                livesLostMessage.style.color = '#ff6b6b';
+                livesLostMessage.style.fontSize = '20px';
+                livesLostMessage.style.fontWeight = 'bold';
+                livesLostMessage.textContent = '💥 ¡Perdiste todas tus vidas! 💥';
+                gameOverContent.insertBefore(livesLostMessage, gameOverContent.querySelector('p'));
+            }
             
             document.getElementById('gameOver').style.display = 'flex';
         }
@@ -911,6 +943,7 @@
             difficulty = 1;
             powerUpActive = false;
             powerUpTimer = 0;
+            lives = 3; // Resetear vidas
             
             // Ocultar game over y pause menu
             document.getElementById('gameOver').style.display = 'none';
